@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Order Confirmation - Mealky Way</title>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="container">
+            <div class="nav-content">
+                <div class="logo">
+                    <h1>MealkyWay</h1>
+                </div>
+                <ul class="nav-links">
+                    <li><a href="/">Home</a></li>
+                    <li><a href="/order">Order Now</a></li>
+                    <li><a href="/admin">Admin</a></li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Confirmation Section -->
+    <section class="confirmation-section">
+        <div class="container">
+            <div class="confirmation-wrapper">
+                <div class="success-icon">
+                    <div class="checkmark">✓</div>
+                </div>
+                
+                <h1 class="confirmation-title">অর্ডার সফল হয়েছে!</h1>
+                <p class="confirmation-subtitle">আপনার অর্ডার সফলভাবে গ্রহণ করা হয়েছে</p>
+
+                <div class="confirmation-details">
+                    <h3>অর্ডার বিবরণ</h3>
+                    <div class="detail-row">
+                        <span class="detail-label">অর্ডার নম্বর:</span>
+                        <span class="detail-value" id="orderId">-</span>
+                    </div>
+                    <div class="detail-row">
+                        <span class="detail-label">ডেলিভারি সময়:</span>
+                        <span class="detail-value">সন্ধ্যা ৬টার পর</span>
+                    </div>
+                    <div class="detail-row">
+                        <span class="detail-label">স্ট্যাটাস:</span>
+                        <span class="detail-value status-confirmed">নিশ্চিত করা হয়েছে</span>
+                    </div>
+                </div>
+
+                <div class="confirmation-message">
+                    <p>🥛 আপনার অর্ডার প্রস্তুত করা হচ্ছে</p>
+                    <p>সন্ধ্যা ৬টার পর আমরা আপনার রুমে দুধ পৌঁছে দেব</p>
+                </div>
+
+                <div class="confirmation-actions">
+                    <a href="/order" class="btn btn-primary">আরও অর্ডার করুন</a>
+                    <a href="/" class="btn btn-secondary">হোম পেজে ফিরুন</a>
+                </div>
+
+                <div class="contact-help">
+                    <p>কোন সমস্যা হলে যোগাযোগ করুন:</p>
+                    <p>📞 01703770715 | 01568088468</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-logo">
+                    <h2>MealkyWay</h2>
+                    <p>আমরা দিচ্ছি রেডি টু ড্রিঙ্ক দুধ</p>
+                </div>
+                <div class="footer-links">
+                    <h4>Quick Links</h4>
+                    <ul>
+                        <li><a href="/">Home</a></li>
+                        <li><a href="/order">Order Now</a></li>
+                        <li><a href="/admin">Admin Panel</a></li>
+                    </ul>
+                </div>
+                <div class="footer-contact">
+                    <h4>Contact Us</h4>
+                    <p>📞 01703770715</p>
+                    <p>📞 01568088468</p>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2025 Mealky Way. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Get order ID from URL parameters
+        const urlParams = new URLSearchParams(window.location.search);
+        const orderId = urlParams.get('orderId');
+        
+        if (orderId) {
+            document.getElementById('orderId').textContent = '#' + orderId;
+        }
+    </script>
+</body>
+</html>
