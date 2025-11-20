@@ -29,14 +29,15 @@ const hallData = {
 console.log('Admin Panel JS loaded successfully');
 console.log('API URL:', API_URL);
 
-document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener('DOMContentLoaded', async () => {
     console.log('DOM Content Loaded');
     
     try {
-        // Check authentication
-        checkAuth();
+        // Check authentication FIRST and wait for it
+        await checkAuth();
 
-        // Initialize
+        // Only initialize if authenticated
+        console.log('Authentication passed, initializing panel...');
         loadStats();
         loadOrders();
 
@@ -133,6 +134,14 @@ async function checkAuth() {
         });
         
         console.log('Auth check response status:', response.status);
+        
+        if (!response.ok) {
+            console.log('❌ Auth check failed with status:', response.status);
+            localStorage.removeItem('adminAuthToken');
+            window.location.href = '/admin-login.html';
+            return;
+        }
+        
         const data = await response.json();
         console.log('Auth check response data:', data);
 
@@ -140,17 +149,22 @@ async function checkAuth() {
             console.log('❌ Not authenticated, redirecting to login');
             localStorage.removeItem('adminAuthToken');
             window.location.href = '/admin-login.html';
-        } else {
-            console.log('✅ Authenticated as:', data.user.username);
-            const usernameElement = document.getElementById('adminUsername');
-            if (usernameElement) {
-                usernameElement.textContent = `👤 ${data.user.username}`;
-            }
+            return;
         }
+        
+        console.log('✅ Authenticated as:', data.user.username);
+        const usernameElement = document.getElementById('adminUsername');
+        if (usernameElement) {
+            usernameElement.textContent = `👤 ${data.user.username}`;
+        }
+        
+        // Return success
+        return true;
     } catch (error) {
         console.error('❌ Auth check error:', error);
         localStorage.removeItem('adminAuthToken');
         window.location.href = '/admin-login.html';
+        throw error;
     }
 }
 
@@ -192,21 +206,27 @@ async function loadStats() {
         
         if (!response.ok) {
             console.error('Stats API error:', response.status);
+            if (response.status === 401) {
+                console.log('Unauthorized in loadStats, clearing token');
+                localStorage.removeItem('adminAuthToken');
+                window.location.href = '/admin-login.html';
+            }
             return;
         }
         
         const data = await response.json();
         console.log('Stats loaded:', data);
 
+        const stats = data.stats || {};
         const todayOrdersEl = document.getElementById('todayOrders');
         const todayQuantityEl = document.getElementById('todayQuantity');
         const totalCustomersEl = document.getElementById('totalCustomers');
         const totalOrdersEl = document.getElementById('totalOrders');
         
-        if (todayOrdersEl) todayOrdersEl.textContent = data.todayOrders || 0;
-        if (todayQuantityEl) todayQuantityEl.textContent = data.todayQuantity || 0;
-        if (totalCustomersEl) totalCustomersEl.textContent = data.totalCustomers || 0;
-        if (totalOrdersEl) totalOrdersEl.textContent = data.totalOrders || 0;
+        if (todayOrdersEl) todayOrdersEl.textContent = stats.todayOrders || 0;
+        if (todayQuantityEl) todayQuantityEl.textContent = stats.todayQuantity || 0;
+        if (totalCustomersEl) totalCustomersEl.textContent = stats.totalOrders || 0; // Use totalOrders for customers count
+        if (totalOrdersEl) totalOrdersEl.textContent = stats.totalQuantity || 0;
         
         console.log('Stats updated in DOM');
     } catch (error) {

@@ -11,22 +11,38 @@ const supabase = require('../../database/supabase');
 // Simple auth check - just verify the username:password combo on each request
 // This works better for serverless than sessions or token stores
 async function verifyAdminToken(token) {
-  if (!token || !token.includes(':')) return null;
+  if (!token) return null;
   
   try {
-    const [username, password] = Buffer.from(token, 'base64').toString().split(':');
+    const decoded = Buffer.from(token, 'base64').toString();
+    console.log('Verifying token, decoded length:', decoded.length);
     
-    const { data: admin } = await supabase
+    if (!decoded.includes(':')) {
+      console.log('Token format invalid - no colon separator');
+      return null;
+    }
+    
+    const [username, password] = decoded.split(':');
+    console.log('Verifying credentials for user:', username);
+    
+    const { data: admin, error } = await supabase
       .from('admin_users')
       .select('*')
       .eq('username', username)
       .single();
     
-    if (!admin) return null;
+    if (error || !admin) {
+      console.log('Admin not found:', error?.message);
+      return null;
+    }
     
     const isValid = await bcrypt.compare(password, admin.password_hash);
-    if (!isValid) return null;
+    if (!isValid) {
+      console.log('Password mismatch');
+      return null;
+    }
     
+    console.log('✅ Token verified successfully for:', username);
     return { id: admin.id, username: admin.username };
   } catch (error) {
     console.error('Token verification error:', error);
