@@ -173,8 +173,12 @@ async function logout() {
 async function loadStats() {
     console.log('loadStats called');
     try {
+        const authToken = localStorage.getItem('adminAuthToken');
         const response = await fetch(`${API_URL}/api/admin/orders`, {
-            credentials: 'include'
+            credentials: 'include',
+            headers: {
+                'Authorization': `Bearer ${authToken}`
+            }
         });
         
         console.log('Stats response status:', response.status);
@@ -254,8 +258,12 @@ async function loadOrders() {
     `;
 
     try {
+        const authToken = localStorage.getItem('adminAuthToken');
         const response = await fetch(`${API_URL}/api/admin/orders?${params.toString()}`, {
-            credentials: 'include'
+            credentials: 'include',
+            headers: {
+                'Authorization': `Bearer ${authToken}`
+            }
         });
         
         console.log('Orders response status:', response.status);
@@ -368,8 +376,12 @@ function printOrders() {
 // Edit order
 async function editOrder(orderId) {
     try {
+        const authToken = localStorage.getItem('adminAuthToken');
         const response = await fetch(`${API_URL}/api/admin/orders/${orderId}`, {
-            credentials: 'include'
+            credentials: 'include',
+            headers: {
+                'Authorization': `Bearer ${authToken}`
+            }
         });
         const data = await response.json();
 
@@ -404,11 +416,13 @@ async function saveOrder(e) {
     submitBtn.textContent = '⏳ Saving...';
 
     try {
+        const authToken = localStorage.getItem('adminAuthToken');
         const response = await fetch(`${API_URL}/api/admin/orders/${orderId}`, {
             method: 'PUT',
             credentials: 'include',
             headers: {
-                'Content-Type': 'application/json'
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${authToken}`
             },
             body: JSON.stringify({ quantity: parseInt(quantity), date })
         });
@@ -439,9 +453,13 @@ async function deleteOrder(orderId) {
     }
 
     try {
+        const authToken = localStorage.getItem('adminAuthToken');
         const response = await fetch(`${API_URL}/api/admin/orders/${orderId}`, {
             method: 'DELETE',
-            credentials: 'include'
+            credentials: 'include',
+            headers: {
+                'Authorization': `Bearer ${authToken}`
+            }
         });
 
         const data = await response.json();

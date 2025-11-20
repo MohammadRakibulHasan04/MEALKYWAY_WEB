@@ -371,11 +371,8 @@ app.get('/api/admin/orders', isAuthenticated, async (req, res) => {
   }
 });
 
-app.get('/api/admin/orders/:id', async (req, res) => {
+app.get('/api/admin/orders/:id', isAuthenticated, async (req, res) => {
   try {
-    if (!req.session.adminUser) {
-      return res.status(401).json({ error: 'Unauthorized' });
-    }
 
     const { id } = req.params;
 
@@ -418,11 +415,8 @@ app.get('/api/admin/orders/:id', async (req, res) => {
   }
 });
 
-app.put('/api/admin/orders/:id', async (req, res) => {
+app.put('/api/admin/orders/:id', isAuthenticated, async (req, res) => {
   try {
-    if (!req.session.adminUser) {
-      return res.status(401).json({ error: 'Unauthorized' });
-    }
 
     const { id } = req.params;
     const { quantity, date } = req.body;
@@ -446,11 +440,8 @@ app.put('/api/admin/orders/:id', async (req, res) => {
   }
 });
 
-app.delete('/api/admin/orders/:id', async (req, res) => {
+app.delete('/api/admin/orders/:id', isAuthenticated, async (req, res) => {
   try {
-    if (!req.session.adminUser) {
-      return res.status(401).json({ error: 'Unauthorized' });
-    }
 
     const { id } = req.params;
 
