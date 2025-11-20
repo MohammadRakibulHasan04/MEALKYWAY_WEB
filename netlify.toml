@@ -9,8 +9,8 @@
   status = 200
 
 [[redirects]]
-  from = "/admin/*"
-  to = "/.netlify/functions/server"
+  from = "/admin/panel"
+  to = "/admin-panel.html"
   status = 200
 
 [[redirects]]
@@ -21,11 +21,6 @@
 [[redirects]]
   from = "/confirmation"
   to = "/confirmation.html"
-  status = 200
-
-[[redirects]]
-  from = "/admin-login.html"
-  to = "/admin-login.html"
   status = 200
 
 [[redirects]]
