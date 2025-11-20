@@ -38,6 +38,10 @@ document.addEventListener('DOMContentLoaded', () => {
             const data = await response.json();
 
             if (response.ok && data.success) {
+                // Store auth token in localStorage
+                if (data.token) {
+                    localStorage.setItem('adminAuthToken', data.token);
+                }
                 showMessage('Login successful! Redirecting...', 'success');
                 setTimeout(() => {
                     window.location.href = '/admin-panel.html';
@@ -57,16 +61,29 @@ document.addEventListener('DOMContentLoaded', () => {
 
     async function checkAuth() {
         try {
+            const authToken = localStorage.getItem('adminAuthToken');
+            
+            if (!authToken) {
+                return; // Not logged in, stay on login page
+            }
+
             const response = await fetch(`${API_URL}/api/admin/check`, {
-                credentials: 'include'
+                credentials: 'include',
+                headers: {
+                    'Authorization': `Bearer ${authToken}`
+                }
             });
             const data = await response.json();
 
             if (data.authenticated) {
                 window.location.href = '/admin-panel.html';
+            } else {
+                // Token is invalid, remove it
+                localStorage.removeItem('adminAuthToken');
             }
         } catch (error) {
             console.error('Auth check error:', error);
+            localStorage.removeItem('adminAuthToken');
         }
     }
 

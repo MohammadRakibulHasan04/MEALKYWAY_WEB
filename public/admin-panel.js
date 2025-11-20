@@ -110,10 +110,20 @@ function stopAutoRefresh() {
 // Check authentication
 async function checkAuth() {
     try {
+        // Check for auth token in localStorage
+        const authToken = localStorage.getItem('adminAuthToken');
+        
+        if (!authToken) {
+            console.log('No auth token found, redirecting to login');
+            window.location.href = '/admin-login.html';
+            return;
+        }
+
         const response = await fetch(`${API_URL}/api/admin/check`, {
             credentials: 'include',
             headers: {
-                'Content-Type': 'application/json'
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${authToken}`
             }
         });
         const data = await response.json();
@@ -122,6 +132,7 @@ async function checkAuth() {
 
         if (!data.authenticated) {
             console.log('Not authenticated, redirecting to login');
+            localStorage.removeItem('adminAuthToken');
             window.location.href = '/admin-login.html';
         } else {
             const usernameElement = document.getElementById('adminUsername');
@@ -131,6 +142,7 @@ async function checkAuth() {
         }
     } catch (error) {
         console.error('Auth check error:', error);
+        localStorage.removeItem('adminAuthToken');
         window.location.href = '/admin-login.html';
     }
 }
@@ -139,14 +151,20 @@ async function checkAuth() {
 async function logout() {
     console.log('Logout clicked');
     try {
+        const authToken = localStorage.getItem('adminAuthToken');
         const response = await fetch(`${API_URL}/api/admin/logout`, { 
             method: 'POST',
-            credentials: 'include'
+            credentials: 'include',
+            headers: {
+                'Authorization': `Bearer ${authToken}`
+            }
         });
         console.log('Logout response:', response.status);
+        localStorage.removeItem('adminAuthToken');
         window.location.href = '/admin-login.html';
     } catch (error) {
         console.error('Logout error:', error);
+        localStorage.removeItem('adminAuthToken');
         window.location.href = '/admin-login.html';
     }
 }

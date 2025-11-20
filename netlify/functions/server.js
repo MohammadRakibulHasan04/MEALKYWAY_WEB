@@ -3,9 +3,13 @@ const serverless = require('serverless-http');
 const session = require('express-session');
 const cors = require('cors');
 const bcrypt = require('bcryptjs');
+const crypto = require('crypto');
 require('dotenv').config();
 
 const supabase = require('../../database/supabase');
+
+// In-memory token store (for serverless, tokens are temporary per deployment)
+const tokenStore = new Map();
 
 const app = express();
 
@@ -185,12 +189,33 @@ app.post('/api/admin/login', async (req, res) => {
       return res.status(401).json({ error: 'Invalid credentials' });
     }
 
-    req.session.adminUser = {
+    // Generate token
+    const token = crypto.randomBytes(32).toString('hex');
+    const userData = {
       id: admin.id,
-      username: admin.username
+      username: admin.username,
+      createdAt: Date.now()
     };
+    
+    // Store token (expires in 24 hours)
+    tokenStore.set(token, userData);
+    
+    // Clean up old tokens (older than 24 hours)
+    const now = Date.now();
+    for (const [key, value] of tokenStore.entries()) {
+      if (now - value.createdAt > 24 * 60 * 60 * 1000) {
+        tokenStore.delete(key);
+      }
+    }
 
-    res.json({ success: true, message: 'Login successful' });
+    // Also set session for backwards compatibility
+    req.session.adminUser = userData;
+
+    res.json({ 
+      success: true, 
+      message: 'Login successful',
+      token: token
+    });
   } catch (err) {
     console.error('Login error:', err);
     res.status(500).json({ error: 'Server error' });
@@ -198,6 +223,13 @@ app.post('/api/admin/login', async (req, res) => {
 });
 
 app.post('/api/admin/logout', (req, res) => {
+  // Remove token from store
+  const authHeader = req.headers['authorization'];
+  if (authHeader && authHeader.startsWith('Bearer ')) {
+    const token = authHeader.substring(7);
+    tokenStore.delete(token);
+  }
+  
   req.session.destroy((err) => {
     if (err) {
       return res.status(500).json({ error: 'Failed to logout' });
@@ -207,6 +239,24 @@ app.post('/api/admin/logout', (req, res) => {
 });
 
 app.get('/api/admin/check', (req, res) => {
+  // Check token first
+  const authHeader = req.headers['authorization'];
+  if (authHeader && authHeader.startsWith('Bearer ')) {
+    const token = authHeader.substring(7);
+    const userData = tokenStore.get(token);
+    
+    if (userData) {
+      // Check if token is still valid (< 24 hours old)
+      if (Date.now() - userData.createdAt < 24 * 60 * 60 * 1000) {
+        return res.json({ authenticated: true, user: userData });
+      } else {
+        // Token expired
+        tokenStore.delete(token);
+      }
+    }
+  }
+  
+  // Fallback to session
   if (req.session.adminUser) {
     res.json({ authenticated: true, user: req.session.adminUser });
   } else {
@@ -216,11 +266,31 @@ app.get('/api/admin/check', (req, res) => {
 
 // ==================== ADMIN ORDERS API ====================
 
-app.get('/api/admin/orders', async (req, res) => {
-  try {
-    if (!req.session.adminUser) {
-      return res.status(401).json({ error: 'Unauthorized' });
+// Auth middleware
+function isAuthenticated(req, res, next) {
+  // Check token
+  const authHeader = req.headers['authorization'];
+  if (authHeader && authHeader.startsWith('Bearer ')) {
+    const token = authHeader.substring(7);
+    const userData = tokenStore.get(token);
+    
+    if (userData && (Date.now() - userData.createdAt < 24 * 60 * 60 * 1000)) {
+      req.adminUser = userData;
+      return next();
     }
+  }
+  
+  // Check session
+  if (req.session.adminUser) {
+    req.adminUser = req.session.adminUser;
+    return next();
+  }
+  
+  return res.status(401).json({ error: 'Unauthorized' });
+}
+
+app.get('/api/admin/orders', isAuthenticated, async (req, res) => {
+  try {
 
     const { date, institution, hall, customer } = req.query;
 
