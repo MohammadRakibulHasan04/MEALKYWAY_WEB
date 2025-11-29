@@ -1532,3 +1532,107 @@ body {
         text-align: center;
     }
 }
+
+/* ==================== NOTICE SECTION (HOMEPAGE) ==================== */
+.notice-section {
+    padding: 40px 0;
+    background: linear-gradient(135deg, #fff9e6 0%, #fffaed 100%);
+    border-top: 3px solid var(--bright-yellow);
+    border-bottom: 3px solid var(--bright-yellow);
+}
+
+.notice-container {
+    display: flex;
+    align-items: flex-start;
+    gap: 20px;
+    background: var(--white);
+    padding: 25px;
+    border-radius: 15px;
+    box-shadow: 0 5px 20px rgba(244, 196, 48, 0.2);
+    border-left: 5px solid var(--bright-yellow);
+}
+
+.notice-icon {
+    font-size: 36px;
+    flex-shrink: 0;
+    animation: noticeIconPulse 2s infinite;
+}
+
+@keyframes noticeIconPulse {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.1); }
+}
+
+.notice-content {
+    flex: 1;
+}
+
+.notice-title {
+    color: var(--primary-blue);
+    font-size: 24px;
+    font-weight: 700;
+    margin-bottom: 10px;
+}
+
+.notice-text {
+    color: var(--text-dark);
+    font-size: 16px;
+    line-height: 1.8;
+}
+
+/* ==================== NOTICE BANNER (ORDER PAGE) ==================== */
+.notice-banner {
+    background: linear-gradient(135deg, var(--bright-yellow) 0%, #ffd700 100%);
+    padding: 12px 0;
+    overflow: hidden;
+    position: relative;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+.notice-banner-content {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    animation: scrollNotice 20s linear infinite;
+    white-space: nowrap;
+    padding: 0 20px;
+}
+
+@keyframes scrollNotice {
+    0% { transform: translateX(100%); }
+    100% { transform: translateX(-100%); }
+}
+
+.notice-banner:hover .notice-banner-content {
+    animation-play-state: paused;
+}
+
+.notice-banner-icon {
+    font-size: 24px;
+    flex-shrink: 0;
+}
+
+.notice-banner-text {
+    color: var(--text-dark);
+    font-size: 16px;
+    font-weight: 600;
+}
+
+@media (max-width: 768px) {
+    .notice-container {
+        flex-direction: column;
+        text-align: center;
+    }
+    
+    .notice-title {
+        font-size: 20px;
+    }
+    
+    .notice-text {
+        font-size: 14px;
+    }
+    
+    .notice-banner-text {
+        font-size: 14px;
+    }
+}

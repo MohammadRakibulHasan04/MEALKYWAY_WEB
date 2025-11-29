@@ -5,6 +5,7 @@ const bodyParser = require('body-parser');
 const session = require('express-session');
 const bcrypt = require('bcryptjs');
 const path = require('path');
+const { Parser } = require('json2csv');
 const supabase = require('./database/supabase');
 
 const app = express();
@@ -508,7 +509,124 @@ app.delete('/api/admin/orders/:id', async (req, res) => {
   }
 });
 
-// ==================== HTML PAGE ROUTES ====================
+// ==================== NOTICE APIs ====================
+
+// Get current notice
+app.get('/api/notice', async (req, res) => {
+  try {
+    const { data, error } = await supabase
+      .from('notices')
+      .select('*')
+      .order('id', { ascending: false })
+      .limit(1)
+      .single();
+
+    if (error && error.code !== 'PGRST116') {
+      console.error('Notice fetch error:', error);
+      return res.status(500).json({ error: 'Failed to fetch notice' });
+    }
+
+    res.json({ notice: data?.content || '' });
+  } catch (err) {
+    console.error('Server error:', err);
+    res.status(500).json({ error: 'Server error' });
+  }
+});
+
+// Update notice (admin only)
+app.put('/api/admin/notice', isAuthenticated, async (req, res) => {
+  try {
+    const { content } = req.body;
+
+    // Get the current notice ID or create a new one
+    const { data: existing } = await supabase
+      .from('notices')
+      .select('id')
+      .order('id', { ascending: false })
+      .limit(1)
+      .single();
+
+    let result;
+    if (existing) {
+      result = await supabase
+        .from('notices')
+        .update({ content, updated_at: new Date().toISOString() })
+        .eq('id', existing.id);
+    } else {
+      result = await supabase
+        .from('notices')
+        .insert({ content });
+    }
+
+    if (result.error) {
+      console.error('Notice update error:', result.error);
+      return res.status(500).json({ error: 'Failed to update notice' });
+    }
+
+    res.json({ success: true, message: 'Notice updated successfully' });
+  } catch (err) {
+    console.error('Server error:', err);
+    res.status(500).json({ error: 'Server error' });
+  }
+});
+
+// ==================== EXPORT APIs ====================
+
+// Export orders as CSV
+app.get('/api/admin/export', isAuthenticated, async (req, res) => {
+  try {
+    const { data: orders, error } = await supabase
+      .from('orders')
+      .select(`
+        *,
+        customers (
+          id,
+          name,
+          contact_number,
+          hall,
+          room
+        )
+      `)
+      .order('created_at', { ascending: false });
+
+    if (error) {
+      console.error('Orders fetch error:', error);
+      return res.status(500).json({ error: 'Failed to fetch orders' });
+    }
+
+    // Flatten the data for CSV
+    const flattenedOrders = orders.map(order => ({
+      'Order ID': order.id,
+      'Customer Name': order.customers?.name || 'N/A',
+      'Contact Number': order.customers?.contact_number || 'N/A',
+      'Hall': order.customers?.hall || 'N/A',
+      'Room': order.customers?.room || 'N/A',
+      'Quantity': order.quantity,
+      'Delivery Date': order.delivery_date,
+      'Order Date': new Date(order.created_at).toLocaleString('en-GB', { 
+        timeZone: 'Asia/Dhaka',
+        year: 'numeric',
+        month: '2-digit',
+        day: '2-digit',
+        hour: '2-digit',
+        minute: '2-digit',
+        second: '2-digit'
+      })
+    }));
+
+    const parser = new Parser();
+    const csv = parser.parse(flattenedOrders);
+
+    res.setHeader('Content-Type', 'text/csv');
+    res.setHeader('Content-Disposition', `attachment; filename=orders-${Date.now()}.csv`);
+    res.send(csv);
+  } catch (err) {
+    console.error('Server error:', err);
+    res.status(500).json({ error: 'Server error' });
+  }
+});
+
+// ==================== ROUTE HANDLERS ====================
 
 // Home page
 app.get('/', (req, res) => {

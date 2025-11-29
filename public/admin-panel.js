@@ -93,6 +93,15 @@ document.addEventListener('DOMContentLoaded', async () => {
         if (printOrdersBtn) printOrdersBtn.addEventListener('click', printOrders);
         if (editOrderForm) editOrderForm.addEventListener('submit', saveOrder);
 
+        // Notice and Export listeners
+        const updateNoticeBtn = document.getElementById('updateNoticeBtn');
+        const exportCsvBtn = document.getElementById('exportCsvBtn');
+        if (updateNoticeBtn) updateNoticeBtn.addEventListener('click', updateNotice);
+        if (exportCsvBtn) exportCsvBtn.addEventListener('click', exportOrders);
+
+        // Load current notice
+        loadNotice();
+
         // Close modal listeners
         document.querySelectorAll('.close-modal').forEach(btn => {
             btn.addEventListener('click', closeModal);
@@ -555,4 +564,92 @@ function openModal() {
 
 function closeModal() {
     document.getElementById('editModal').classList.remove('active');
+}
+
+// Notice Management Functions
+async function loadNotice() {
+    try {
+        const response = await fetch(`${API_URL}/api/notice`);
+        const data = await response.json();
+        
+        if (data.notice) {
+            document.getElementById('noticeContent').value = data.notice;
+        }
+    } catch (error) {
+        console.error('Error loading notice:', error);
+    }
+}
+
+async function updateNotice() {
+    const content = document.getElementById('noticeContent').value.trim();
+    const authToken = localStorage.getItem('adminAuthToken');
+    
+    if (!authToken) {
+        showToast('❌ Authentication error. Please login again.', 'error');
+        return;
+    }
+
+    try {
+        const response = await fetch(`${API_URL}/api/admin/notice`, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${authToken}`
+            },
+            body: JSON.stringify({ content })
+        });
+
+        const data = await response.json();
+
+        if (response.ok && data.success) {
+            showToast('✅ Notice updated successfully!', 'success');
+        } else {
+            showToast('❌ ' + (data.error || 'Failed to update notice'), 'error');
+        }
+    } catch (error) {
+        console.error('Error updating notice:', error);
+        showToast('❌ Network error. Please try again.', 'error');
+    }
+}
+
+// Export Orders Function
+async function exportOrders() {
+    const authToken = localStorage.getItem('adminAuthToken');
+    
+    if (!authToken) {
+        showToast('❌ Authentication error. Please login again.', 'error');
+        return;
+    }
+
+    try {
+        showToast('📥 Generating CSV file...', 'success');
+        
+        const response = await fetch(`${API_URL}/api/admin/export`, {
+            headers: {
+                'Authorization': `Bearer ${authToken}`
+            }
+        });
+
+        if (!response.ok) {
+            throw new Error('Export failed');
+        }
+
+        // Create a blob from the response
+        const blob = await response.blob();
+        
+        // Create a download link
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `orders-${new Date().toISOString().split('T')[0]}.csv`;
+        document.body.appendChild(a);
+        a.click();
+        window.URL.revokeObjectURL(url);
+        document.body.removeChild(a);
+        
+        showToast('✅ Orders exported successfully!', 'success');
+    } catch (error) {
+        console.error('Error exporting orders:', error);
+        showToast('❌ Failed to export orders. Please try again.', 'error');
+    }
 }

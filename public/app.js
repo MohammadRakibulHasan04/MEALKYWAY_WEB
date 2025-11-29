@@ -27,4 +27,21 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Mobile menu toggle (if needed in future)
     console.log('Mealky Way - Homepage loaded');
+
+    // Fetch and display notice
+    fetchNotice();
 });
+
+async function fetchNotice() {
+    try {
+        const response = await fetch('/api/notice');
+        const data = await response.json();
+        
+        if (data.notice && data.notice.trim() !== '') {
+            document.getElementById('noticeText').textContent = data.notice;
+            document.getElementById('noticeSection').style.display = 'block';
+        }
+    } catch (error) {
+        console.error('Error fetching notice:', error);
+    }
+}

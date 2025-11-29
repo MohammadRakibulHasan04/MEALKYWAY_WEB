@@ -174,4 +174,21 @@ document.addEventListener('DOMContentLoaded', () => {
             }, 5000);
         }
     }
+
+    // Fetch and display notice
+    fetchNotice();
 });
+
+async function fetchNotice() {
+    try {
+        const response = await fetch(`${API_URL}/api/notice`);
+        const data = await response.json();
+        
+        if (data.notice && data.notice.trim() !== '') {
+            document.getElementById('noticeBannerText').textContent = data.notice;
+            document.getElementById('noticeBanner').style.display = 'block';
+        }
+    } catch (error) {
+        console.error('Error fetching notice:', error);
+    }
+}
