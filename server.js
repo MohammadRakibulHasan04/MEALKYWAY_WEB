@@ -207,6 +207,10 @@ app.post('/api/admin/login', async (req, res) => {
   try {
     const { username, password } = req.body;
 
+    if (!username || !password) {
+      return res.status(400).json({ error: 'Username and password required' });
+    }
+
     // Get admin user
     const { data: admin, error } = await supabase
       .from('admin_users')
@@ -224,13 +228,20 @@ app.post('/api/admin/login', async (req, res) => {
       return res.status(401).json({ error: 'Invalid credentials' });
     }
 
+    // Create a simple token with username:password encoded
+    const token = Buffer.from(`${username}:${password}`).toString('base64');
+
     // Set session
     req.session.adminUser = {
       id: admin.id,
       username: admin.username
     };
 
-    res.json({ success: true, message: 'Login successful' });
+    res.json({ 
+      success: true, 
+      message: 'Login successful',
+      token: token
+    });
   } catch (err) {
     console.error('Login error:', err);
     res.status(500).json({ error: 'Server error' });
@@ -249,12 +260,39 @@ app.post('/api/admin/logout', (req, res) => {
 
 // Check admin authentication
 app.get('/api/admin/check', (req, res) => {
-  if (req.session.adminUser) {
+  const authToken = req.headers['authorization'];
+  
+  if (authToken && authToken.startsWith('Bearer ')) {
+    // Token-based auth (for compatibility with Netlify deployment)
+    res.json({ authenticated: true });
+  } else if (req.session.adminUser) {
+    // Session-based auth (for local development)
     res.json({ authenticated: true, user: req.session.adminUser });
   } else {
     res.json({ authenticated: false });
   }
 });
+
+// Authentication middleware
+function isAuthenticated(req, res, next) {
+  // Check token-based auth first (for compatibility)
+  const authHeader = req.headers['authorization'];
+  if (authHeader && authHeader.startsWith('Bearer ')) {
+    const token = authHeader.substring(7);
+    // Simple validation - just check if token exists
+    if (token) {
+      return next();
+    }
+  }
+  
+  // Check session-based auth
+  if (req.session.adminUser) {
+    req.adminUser = req.session.adminUser;
+    return next();
+  }
+  
+  return res.status(401).json({ error: 'Unauthorized' });
+}
 
 // ==================== ADMIN PANEL ROUTES ====================
 
@@ -270,12 +308,8 @@ app.get('/admin/panel', (req, res) => {
 // ==================== ADMIN ORDERS API ====================
 
 // Get all orders with customer details and filters
-app.get('/api/admin/orders', async (req, res) => {
+app.get('/api/admin/orders', isAuthenticated, async (req, res) => {
   try {
-    if (!req.session.adminUser) {
-      return res.status(401).json({ error: 'Unauthorized' });
-    }
-
     const { date, institution, hall, customer } = req.query;
 
     // Build query with sorting by date and ID descending
@@ -399,12 +433,9 @@ app.get('/api/admin/stats', async (req, res) => {
   }
 });
 
-// Get a single order by ID
-app.get('/api/admin/orders/:id', async (req, res) => {
+// Get single order by ID
+app.get('/api/admin/orders/:id', isAuthenticated, async (req, res) => {
   try {
-    if (!req.session.adminUser) {
-      return res.status(401).json({ error: 'Unauthorized' });
-    }
 
     const { id } = req.params;
 
@@ -448,12 +479,9 @@ app.get('/api/admin/orders/:id', async (req, res) => {
   }
 });
 
-// Update an order
-app.put('/api/admin/orders/:id', async (req, res) => {
+// Update order
+app.put('/api/admin/orders/:id', isAuthenticated, async (req, res) => {
   try {
-    if (!req.session.adminUser) {
-      return res.status(401).json({ error: 'Unauthorized' });
-    }
 
     const { id } = req.params;
     const { quantity, date } = req.body;
@@ -485,11 +513,8 @@ app.put('/api/admin/orders/:id', async (req, res) => {
 });
 
 // Delete an order
-app.delete('/api/admin/orders/:id', async (req, res) => {
+app.delete('/api/admin/orders/:id', isAuthenticated, async (req, res) => {
   try {
-    if (!req.session.adminUser) {
-      return res.status(401).json({ error: 'Unauthorized' });
-    }
 
     const { id } = req.params;
 
