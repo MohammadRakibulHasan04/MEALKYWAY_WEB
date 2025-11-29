@@ -207,26 +207,48 @@ app.post('/api/admin/login', async (req, res) => {
   try {
     const { username, password } = req.body;
 
+    console.log('=== LOGIN ATTEMPT ===');
+    console.log('Username received:', username);
+    console.log('Password received:', password ? '***' + password.slice(-3) : 'EMPTY');
+    console.log('Request body:', req.body);
+
     if (!username || !password) {
+      console.log('❌ Missing credentials');
       return res.status(400).json({ error: 'Username and password required' });
     }
 
     // Get admin user
+    console.log('Querying database for username:', username);
     const { data: admin, error } = await supabase
       .from('admin_users')
       .select('*')
       .eq('username', username)
       .single();
 
-    if (error || !admin) {
+    if (error) {
+      console.log('❌ Database error:', error.message);
       return res.status(401).json({ error: 'Invalid credentials' });
     }
 
-    // Verify password
-    const isValid = await bcrypt.compare(password, admin.password_hash);
-    if (!isValid) {
+    if (!admin) {
+      console.log('❌ No admin user found');
       return res.status(401).json({ error: 'Invalid credentials' });
     }
+
+    console.log('✅ Admin user found:', admin.username);
+    console.log('Stored hash:', admin.password_hash);
+
+    // Verify password
+    console.log('Comparing password...');
+    const isValid = await bcrypt.compare(password, admin.password_hash);
+    console.log('Password match result:', isValid);
+
+    if (!isValid) {
+      console.log('❌ Password mismatch');
+      return res.status(401).json({ error: 'Invalid credentials' });
+    }
+
+    console.log('✅ Login successful!');
 
     // Create a simple token with username:password encoded
     const token = Buffer.from(`${username}:${password}`).toString('base64');
@@ -260,15 +282,25 @@ app.post('/api/admin/logout', (req, res) => {
 
 // Check admin authentication
 app.get('/api/admin/check', (req, res) => {
+  console.log('=== AUTH CHECK ===');
   const authToken = req.headers['authorization'];
+  console.log('Auth header:', authToken ? 'Present' : 'Missing');
+  console.log('Session user:', req.session.adminUser ? 'Present' : 'Missing');
   
   if (authToken && authToken.startsWith('Bearer ')) {
     // Token-based auth (for compatibility with Netlify deployment)
-    res.json({ authenticated: true });
+    console.log('✅ Token-based auth successful');
+    // Decode token to get username
+    const token = authToken.substring(7);
+    const decoded = Buffer.from(token, 'base64').toString();
+    const [username] = decoded.split(':');
+    res.json({ authenticated: true, user: { username } });
   } else if (req.session.adminUser) {
     // Session-based auth (for local development)
+    console.log('✅ Session-based auth successful');
     res.json({ authenticated: true, user: req.session.adminUser });
   } else {
+    console.log('❌ No valid authentication found');
     res.json({ authenticated: false });
   }
 });

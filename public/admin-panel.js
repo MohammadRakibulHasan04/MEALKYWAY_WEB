@@ -181,10 +181,11 @@ async function checkAuth() {
             return;
         }
         
-        console.log('✅ Authenticated as:', data.user.username);
+        const username = data.user?.username || 'Admin';
+        console.log('✅ Authenticated as:', username);
         const usernameElement = document.getElementById('adminUsername');
         if (usernameElement) {
-            usernameElement.textContent = `👤 ${data.user.username}`;
+            usernameElement.textContent = `👤 ${username}`;
         }
         
         // Return success
