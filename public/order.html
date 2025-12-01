@@ -1,193 +1,302 @@
 <!DOCTYPE html>
 <html lang="bn">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Order Now - Mealky Way</title>
-    <link rel="stylesheet" href="styles.css">
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
-</head>
-<body>
+    <link rel="stylesheet" href="styles.css" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap"
+      rel="stylesheet"
+    />
+  </head>
+  <body>
     <!-- Navigation -->
     <nav class="navbar">
-        <div class="container">
-            <div class="nav-content">
-                <div class="logo">
-                    <h1>MealkyWay</h1>
-                </div>
-                <ul class="nav-links">
-                    <li><a href="/">Home</a></li>
-                    <li><a href="/order" class="active">Order Now</a></li>
-                </ul>
-            </div>
+      <div class="container">
+        <div class="nav-content">
+          <div class="logo">
+            <h1>MealkyWay</h1>
+          </div>
+          <ul class="nav-links">
+            <li><a href="/">Home</a></li>
+            <li><a href="/order" class="active">Order Now</a></li>
+          </ul>
         </div>
+      </div>
     </nav>
 
     <!-- Scrolling Notice Banner -->
-    <div class="notice-banner" id="noticeBanner" style="display: none;">
-        <div class="notice-banner-content">
-            <span class="notice-banner-icon">📢</span>
-            <div class="notice-banner-text" id="noticeBannerText"></div>
-        </div>
+    <div class="notice-banner" id="noticeBanner" style="display: none">
+      <div class="notice-banner-content">
+        <span class="notice-banner-icon">📢</span>
+        <div class="notice-banner-text" id="noticeBannerText"></div>
+      </div>
     </div>
 
     <!-- Order Form Section -->
     <section class="order-section">
-        <div class="container">
-            <div class="order-wrapper">
-                <div class="order-header">
-                    <h1>অর্ডার করুন</h1>
-                    <p>নিচের ফর্মটি পূরণ করে আপনার অর্ডার প্লেস করুন</p>
+      <div class="container">
+        <div class="order-wrapper">
+          <div class="order-header">
+            <h1>অর্ডার করুন</h1>
+            <p>নিচের ফর্মটি পূরণ করে আপনার অর্ডার প্লেস করুন</p>
+          </div>
+
+          <div class="order-content">
+            <div class="order-form-container">
+              <form id="orderForm" class="order-form">
+                <div class="form-group">
+                  <label for="contactNumber"
+                    >যোগাযোগ নম্বর <span class="required">*</span></label
+                  >
+                  <input
+                    type="tel"
+                    id="contactNumber"
+                    name="contactNumber"
+                    placeholder="01XXXXXXXXX"
+                    pattern="01[0-9]{9}"
+                    required
+                  />
+                  <small class="form-hint">ফোন নম্বর দিন (১১ ডিজিট)</small>
                 </div>
 
-                <div class="order-content">
-                    <div class="order-form-container">
-                        <form id="orderForm" class="order-form">
-                            <div class="form-group">
-                                <label for="contactNumber">যোগাযোগ নম্বর <span class="required">*</span></label>
-                                <input 
-                                    type="tel" 
-                                    id="contactNumber" 
-                                    name="contactNumber" 
-                                    placeholder="01XXXXXXXXX" 
-                                    pattern="01[0-9]{9}"
-                                    required
-                                >
-                                <small class="form-hint">ফোন নম্বর দিন (১১ ডিজিট)</small>
-                            </div>
-
-                            <div class="form-group">
-                                <label for="name">নাম <span class="required">*</span></label>
-                                <input 
-                                    type="text" 
-                                    id="name" 
-                                    name="name" 
-                                    placeholder="আপনার নাম লিখুন"
-                                    required
-                                >
-                            </div>
-
-                            <div class="form-group">
-                                <label for="institution">প্রতিষ্ঠান <span class="required">*</span></label>
-                                <select id="institution" name="institution" required>
-                                    <option value="">প্রতিষ্ঠান নির্বাচন করুন</option>
-                                    <option value="RU">Rajshahi University (RU)</option>
-                                    <option value="RMC">Rajshahi Medical College (RMC)</option>
-                                </select>
-                            </div>
-
-                            <div class="form-group">
-                                <label for="hall">হল নাম <span class="required">*</span></label>
-                                <select id="hall" name="hall" required disabled>
-                                    <option value="">প্রথমে প্রতিষ্ঠান নির্বাচন করুন</option>
-                                </select>
-                            </div>
-
-                            <div class="form-group">
-                                <label for="room">রুম নম্বর <span class="required">*</span></label>
-                                <input 
-                                    type="text" 
-                                    id="room" 
-                                    name="room" 
-                                    placeholder="রুম নম্বর লিখুন (যেমনঃ ২০১)"
-                                    required
-                                >
-                            </div>
-
-                            <div class="form-group">
-                                <label for="quantity">পরিমাণ (পিস) <span class="required">*</span></label>
-                                <input 
-                                    type="number" 
-                                    id="quantity" 
-                                    name="quantity" 
-                                    placeholder="কয়টি দুধ লাগবে?"
-                                    min="1"
-                                    value="1"
-                                    required
-                                >
-                                <small class="form-hint">প্রতিটি ২৫০ মিলি = ৩০ টাকা</small>
-                            </div>
-
-                            <div class="form-group">
-                                <label for="date">তারিখ <span class="required">*</span></label>
-                                <input 
-                                    type="date" 
-                                    id="date" 
-                                    name="date" 
-                                    required
-                                >
-                            </div>
-
-                            <div class="total-display">
-                                <p>মোট মূল্য: <span id="totalPrice">৩০</span> টাকা</p>
-                            </div>
-
-                            <button type="submit" class="submit-btn">
-                                <span>অর্ডার নিশ্চিত করুন</span>
-                            </button>
-
-                            <div id="formMessage" class="form-message"></div>
-                        </form>
-                    </div>
-
-                    <div class="order-info">
-                        <div class="info-card">
-                            <h3>📋 অর্ডার তথ্য</h3>
-                            <ul>
-                                <li>✓ ডেলিভারি সময়: সন্ধ্যা ৬টার পর</li>
-                                <li>✓ ২৫০ মিলি = ৩০ টাকা</li>
-                                <li>✓ সকল হলে সেবা উপলব্ধ</li>
-                                <li>✓ তাজা ও বিশুদ্ধ দুধ</li>
-                            </ul>
-                        </div>
-
-                        <div class="info-card">
-                            <h3>📞 যোগাযোগ</h3>
-                            <p><strong>ফোন:</strong></p>
-                            <p>01703770715</p>
-                            <p>01568088468</p>
-                            <p class="mt-10"><strong>ওয়েবসাইট:</strong></p>
-                            <p>@mealkyway.netlify.app</p>
-                        </div>
-
-                        <div class="info-card tips-card">
-                            <h3>💡 টিপস</h3>
-                            <p>প্রথমবার অর্ডার করলে আপনার তথ্য সংরক্ষিত হবে। পরবর্তীতে শুধু ফোন নম্বর দিলেই অন্য তথ্য স্বয়ংক্রিয়ভাবে পূরণ হবে!</p>
-                        </div>
-                    </div>
+                <div class="form-group">
+                  <label for="name">নাম <span class="required">*</span></label>
+                  <input
+                    type="text"
+                    id="name"
+                    name="name"
+                    placeholder="আপনার নাম লিখুন"
+                    required
+                  />
                 </div>
+
+                <div class="form-group">
+                  <label for="institution"
+                    >প্রতিষ্ঠান <span class="required">*</span></label
+                  >
+                  <select id="institution" name="institution" required>
+                    <option value="">প্রতিষ্ঠান নির্বাচন করুন</option>
+                    <option value="RU">Rajshahi University (RU)</option>
+                    <option value="RMC">Rajshahi Medical College (RMC)</option>
+                  </select>
+                </div>
+
+                <div class="form-group">
+                  <label for="hall"
+                    >হল নাম <span class="required">*</span></label
+                  >
+                  <select id="hall" name="hall" required disabled>
+                    <option value="">প্রথমে প্রতিষ্ঠান নির্বাচন করুন</option>
+                  </select>
+                </div>
+
+                <div class="form-group">
+                  <label for="room"
+                    >রুম নম্বর <span class="required">*</span></label
+                  >
+                  <input
+                    type="text"
+                    id="room"
+                    name="room"
+                    placeholder="রুম নম্বর লিখুন (যেমনঃ ২০১)"
+                    required
+                  />
+                </div>
+
+                <div class="form-group">
+                  <label for="quantity"
+                    >দৈনিক পরিমাণ (পিস) <span class="required">*</span></label
+                  >
+                  <input
+                    type="number"
+                    id="quantity"
+                    name="quantity"
+                    placeholder="প্রতিদিন কয়টি দুধ লাগবে?"
+                    min="1"
+                    value="1"
+                    required
+                  />
+                  <small class="form-hint">প্রতিটি ২৫০ মিলি = ৩০ টাকা</small>
+                </div>
+
+                <div class="form-group">
+                  <label>অর্ডার টাইপ <span class="required">*</span></label>
+                  <div class="duration-options">
+                    <label class="duration-option active">
+                      <input
+                        type="radio"
+                        name="durationType"
+                        value="single"
+                        checked
+                      />
+                      <span class="duration-card">
+                        <span class="duration-icon">📅</span>
+                        <span class="duration-label">একদিন</span>
+                      </span>
+                    </label>
+                    <label class="duration-option">
+                      <input type="radio" name="durationType" value="3" />
+                      <span class="duration-card">
+                        <span class="duration-icon">📆</span>
+                        <span class="duration-label">৩ দিন</span>
+                      </span>
+                    </label>
+                    <label class="duration-option">
+                      <input type="radio" name="durationType" value="7" />
+                      <span class="duration-card">
+                        <span class="duration-icon">📅</span>
+                        <span class="duration-label">৭ দিন</span>
+                      </span>
+                    </label>
+                    <label class="duration-option">
+                      <input type="radio" name="durationType" value="10" />
+                      <span class="duration-card">
+                        <span class="duration-icon">📆</span>
+                        <span class="duration-label">১০ দিন</span>
+                      </span>
+                    </label>
+                    <label class="duration-option">
+                      <input type="radio" name="durationType" value="30" />
+                      <span class="duration-card">
+                        <span class="duration-icon">🗓️</span>
+                        <span class="duration-label">৩০ দিন</span>
+                      </span>
+                    </label>
+                    <label class="duration-option">
+                      <input type="radio" name="durationType" value="custom" />
+                      <span class="duration-card">
+                        <span class="duration-icon">🎯</span>
+                        <span class="duration-label">কাস্টম</span>
+                      </span>
+                    </label>
+                  </div>
+                </div>
+
+                <div class="form-group" id="singleDateGroup">
+                  <label for="date"
+                    >তারিখ <span class="required">*</span></label
+                  >
+                  <input type="date" id="date" name="date" required />
+                </div>
+
+                <div
+                  class="form-group"
+                  id="startDateGroup"
+                  style="display: none"
+                >
+                  <label for="startDate"
+                    >শুরুর তারিখ <span class="required">*</span></label
+                  >
+                  <input type="date" id="startDate" name="startDate" />
+                  <small class="form-hint">অর্ডার কবে থেকে শুরু হবে</small>
+                </div>
+
+                <div
+                  class="form-group"
+                  id="customDatesGroup"
+                  style="display: none"
+                >
+                  <label
+                    >তারিখ নির্বাচন করুন <span class="required">*</span></label
+                  >
+                  <small class="form-hint"
+                    >যেসব দিন দুধ লাগবে সেই তারিখগুলো সিলেক্ট করুন</small
+                  >
+                  <div class="custom-date-picker" id="customDatePicker">
+                    <!-- Calendar will be generated by JavaScript -->
+                  </div>
+                  <div class="selected-dates-display" id="selectedDatesDisplay">
+                    <strong>নির্বাচিত তারিখ:</strong>
+                    <span id="selectedDatesCount">0</span> দিন
+                  </div>
+                </div>
+
+                <div class="order-summary">
+                  <div class="summary-row">
+                    <span>দৈনিক পরিমাণ:</span>
+                    <span id="summaryQuantity">1 পিস</span>
+                  </div>
+                  <div class="summary-row">
+                    <span>মোট দিন:</span>
+                    <span id="summaryDays">1 দিন</span>
+                  </div>
+                  <div class="summary-row total-row">
+                    <span>মোট মূল্য:</span>
+                    <span id="totalPrice">৩০ টাকা</span>
+                  </div>
+                </div>
+
+                <button type="submit" class="submit-btn">
+                  <span>অর্ডার নিশ্চিত করুন</span>
+                </button>
+
+                <div id="formMessage" class="form-message"></div>
+              </form>
             </div>
+
+            <div class="order-info">
+              <div class="info-card">
+                <h3>📋 অর্ডার তথ্য</h3>
+                <ul>
+                  <li>✓ ডেলিভারি সময়: সন্ধ্যা ৬টার পর</li>
+                  <li>✓ ২৫০ মিলি = ৩০ টাকা</li>
+                  <li>✓ সকল হলে সেবা উপলব্ধ</li>
+                  <li>✓ তাজা ও বিশুদ্ধ দুধ</li>
+                </ul>
+              </div>
+
+              <div class="info-card">
+                <h3>📞 যোগাযোগ</h3>
+                <p><strong>ফোন:</strong></p>
+                <p>01703770715</p>
+                <p>01568088468</p>
+                <p class="mt-10"><strong>ওয়েবসাইট:</strong></p>
+                <p>@mealkyway.netlify.app</p>
+              </div>
+
+              <div class="info-card tips-card">
+                <h3>💡 টিপস</h3>
+                <p>
+                  প্রথমবার অর্ডার করলে আপনার তথ্য সংরক্ষিত হবে। পরবর্তীতে শুধু
+                  ফোন নম্বর দিলেই অন্য তথ্য স্বয়ংক্রিয়ভাবে পূরণ হবে!
+                </p>
+              </div>
+            </div>
+          </div>
         </div>
+      </div>
     </section>
 
     <!-- Footer -->
     <footer class="footer">
-        <div class="container">
-            <div class="footer-content">
-                <div class="footer-logo">
-                    <h2>MealkyWay</h2>
-                    <p>আমরা দিচ্ছি রেডি টু ড্রিঙ্ক দুধ</p>
-                </div>
-                <div class="footer-links">
-                    <h4>Quick Links</h4>
-                    <ul>
-                        <li><a href="/">Home</a></li>
-                        <li><a href="/order">Order Now</a></li>
-                        <li><a href="/admin">Admin Panel</a></li>
-                    </ul>
-                </div>
-                <div class="footer-contact">
-                    <h4>Contact Us</h4>
-                    <p>📞 01703770715</p>
-                    <p>📞 01568088468</p>
-                </div>
-            </div>
-            <div class="footer-bottom">
-                <p>&copy; 2025 Mealky Way. All rights reserved.</p>
-            </div>
+      <div class="container">
+        <div class="footer-content">
+          <div class="footer-logo">
+            <h2>MealkyWay</h2>
+            <p>আমরা দিচ্ছি রেডি টু ড্রিঙ্ক দুধ</p>
+          </div>
+          <div class="footer-links">
+            <h4>Quick Links</h4>
+            <ul>
+              <li><a href="/">Home</a></li>
+              <li><a href="/order">Order Now</a></li>
+              <li><a href="/admin">Admin Panel</a></li>
+            </ul>
+          </div>
+          <div class="footer-contact">
+            <h4>Contact Us</h4>
+            <p>📞 01703770715</p>
+            <p>📞 01568088468</p>
+          </div>
         </div>
+        <div class="footer-bottom">
+          <p>&copy; 2025 Mealky Way. All rights reserved.</p>
+        </div>
+      </div>
     </footer>
 
     <script src="order.js"></script>
-</body>
+  </body>
 </html>

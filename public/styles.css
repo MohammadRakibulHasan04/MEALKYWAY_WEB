@@ -513,6 +513,188 @@ body {
   font-size: 14px;
 }
 
+/* Duration Selection Styles */
+.duration-options {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+  margin-top: 10px;
+}
+
+.duration-option {
+  cursor: pointer;
+  position: relative;
+}
+
+.duration-option input[type="radio"] {
+  position: absolute;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.duration-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  padding: 15px 10px;
+  background: var(--white);
+  border: 2px solid #e0e0e0;
+  border-radius: 12px;
+  transition: all 0.3s ease;
+}
+
+.duration-option:hover .duration-card {
+  border-color: var(--primary-blue);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 123, 255, 0.15);
+}
+
+.duration-option.active .duration-card {
+  background: linear-gradient(135deg, var(--primary-blue) 0%, #0056b3 100%);
+  border-color: var(--primary-blue);
+  color: var(--white);
+  box-shadow: 0 4px 15px rgba(0, 123, 255, 0.3);
+}
+
+.duration-icon {
+  font-size: 28px;
+  transition: transform 0.3s ease;
+}
+
+.duration-option.active .duration-icon {
+  transform: scale(1.1);
+}
+
+.duration-label {
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.duration-option.active .duration-label {
+  color: var(--white);
+}
+
+/* Custom Date Picker Styles */
+.custom-date-picker {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 8px;
+  padding: 20px;
+  background: #f8f9fa;
+  border-radius: 12px;
+  margin-top: 15px;
+}
+
+.date-cell {
+  aspect-ratio: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 8px;
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  background: var(--white);
+  border: 2px solid #e0e0e0;
+  position: relative;
+}
+
+.date-cell.header {
+  font-weight: 700;
+  color: var(--primary-blue);
+  background: transparent;
+  border: none;
+  cursor: default;
+  font-size: 12px;
+}
+
+.date-cell.disabled {
+  opacity: 0.3;
+  cursor: not-allowed;
+  background: #f5f5f5;
+}
+
+.date-cell:not(.header):not(.disabled):hover {
+  border-color: var(--primary-blue);
+  transform: scale(1.05);
+  box-shadow: 0 2px 8px rgba(0, 123, 255, 0.2);
+}
+
+.date-cell.selected {
+  background: linear-gradient(135deg, var(--primary-blue) 0%, #0056b3 100%);
+  color: var(--white);
+  border-color: var(--primary-blue);
+  font-weight: 700;
+}
+
+.date-cell.today {
+  border-color: var(--bright-yellow);
+  font-weight: 600;
+}
+
+.selected-dates-display {
+  margin-top: 15px;
+  padding: 12px 16px;
+  background: var(--light-blue);
+  border-radius: 8px;
+  font-size: 15px;
+  color: var(--text-dark);
+}
+
+.selected-dates-display strong {
+  color: var(--primary-blue);
+}
+
+#selectedDatesCount {
+  font-weight: 700;
+  color: var(--bright-yellow);
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1);
+}
+
+/* Order Summary Styles */
+.order-summary {
+  background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+  padding: 20px;
+  border-radius: 12px;
+  border: 2px solid var(--primary-blue);
+  margin-bottom: 25px;
+}
+
+.summary-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 0;
+  font-size: 16px;
+  color: var(--text-dark);
+}
+
+.summary-row:not(:last-child) {
+  border-bottom: 1px solid #dee2e6;
+}
+
+.summary-row span:first-child {
+  font-weight: 500;
+}
+
+.summary-row span:last-child {
+  font-weight: 700;
+  color: var(--primary-blue);
+}
+
+.summary-row.total-row {
+  font-size: 20px;
+  padding-top: 15px;
+  border-top: 2px solid var(--primary-blue);
+}
+
+.summary-row.total-row span:last-child {
+  color: var(--bright-yellow);
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.2);
+  font-size: 24px;
+}
+
 .total-display {
   background: var(--light-blue);
   padding: 20px;
@@ -1488,6 +1670,55 @@ body {
   .login-card,
   .confirmation-wrapper {
     padding: 30px 20px;
+  }
+
+  /* Duration options responsive */
+  .duration-options {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+  }
+
+  .duration-card {
+    padding: 12px 8px;
+  }
+
+  .duration-icon {
+    font-size: 24px;
+  }
+
+  .duration-label {
+    font-size: 13px;
+  }
+
+  /* Custom date picker responsive */
+  .custom-date-picker {
+    gap: 6px;
+    padding: 15px;
+  }
+
+  .date-cell {
+    font-size: 12px;
+  }
+
+  .date-cell.header {
+    font-size: 11px;
+  }
+
+  /* Order summary responsive */
+  .order-summary {
+    padding: 15px;
+  }
+
+  .summary-row {
+    font-size: 14px;
+  }
+
+  .summary-row.total-row {
+    font-size: 18px;
+  }
+
+  .summary-row.total-row span:last-child {
+    font-size: 20px;
   }
 
   .stats-grid {
