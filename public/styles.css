@@ -27,12 +27,18 @@
   box-sizing: border-box;
 }
 
+html {
+  scroll-behavior: smooth;
+}
+
 body {
   font-family: var(--font-main);
   color: var(--text-dark);
   line-height: 1.6;
   overflow-x: hidden;
-  background: #f0f0f0;
+  background: #f8f9fa;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
 .container {
@@ -460,6 +466,12 @@ body {
 .order-header h1 {
   font-size: 36px;
   margin-bottom: 10px;
+  line-height: 1.2;
+}
+
+.order-header p {
+  font-size: 16px;
+  opacity: 0.95;
 }
 
 .order-content {
@@ -474,7 +486,7 @@ body {
 }
 
 .order-form .form-group {
-  margin-bottom: 25px;
+  margin-bottom: 20px;
 }
 
 .order-form label {
@@ -496,14 +508,24 @@ body {
   border-radius: 10px;
   font-size: 16px;
   font-family: var(--font-main);
-  transition: all 0.3s;
+  transition: all 0.3s ease;
+  background-color: var(--white);
 }
 
 .order-form input:focus,
 .order-form select:focus {
   outline: none;
   border-color: var(--primary-blue);
-  box-shadow: 0 0 0 3px rgba(0, 87, 163, 0.1);
+  box-shadow: 0 0 0 4px rgba(0, 87, 163, 0.12);
+  background-color: #f8fbff;
+  transform: translateY(-1px);
+}
+
+.order-form input:disabled,
+.order-form select:disabled {
+  background-color: #f5f5f5;
+  cursor: not-allowed;
+  opacity: 0.6;
 }
 
 .form-hint {
@@ -517,8 +539,15 @@ body {
 .duration-options {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  gap: 12px;
+  gap: 10px;
   margin-top: 10px;
+}
+
+@media (max-width: 480px) {
+  .duration-options {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 8px;
+  }
 }
 
 .duration-option {
@@ -536,12 +565,14 @@ body {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 8px;
-  padding: 15px 10px;
+  gap: 6px;
+  padding: 14px 8px;
   background: var(--white);
   border: 2px solid #e0e0e0;
-  border-radius: 12px;
+  border-radius: 10px;
   transition: all 0.3s ease;
+  min-height: 75px;
+  justify-content: center;
 }
 
 .duration-option:hover .duration-card {
@@ -575,15 +606,145 @@ body {
   color: var(--white);
 }
 
+/* Date Picker Trigger Button */
+.date-picker-trigger {
+  width: 100%;
+  padding: 14px 16px;
+  background: var(--white);
+  border: 2px solid var(--border-color);
+  border-radius: 10px;
+  font-size: 16px;
+  font-family: var(--font-main);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  transition: all 0.3s ease;
+}
+
+.date-picker-trigger:hover {
+  border-color: var(--primary-blue);
+  background: #f8fbff;
+}
+
+.trigger-icon {
+  font-size: 20px;
+}
+
+.trigger-text {
+  flex: 1;
+  text-align: left;
+  font-weight: 500;
+  color: var(--text-dark);
+}
+
+.trigger-arrow {
+  font-size: 12px;
+  color: var(--text-gray);
+  transition: transform 0.3s ease;
+}
+
+.date-picker-trigger:hover .trigger-arrow {
+  transform: translateY(2px);
+}
+
+/* Floating Date Picker Modal */
+.date-picker-modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.3s ease, visibility 0.3s ease;
+}
+
+.date-picker-modal.active {
+  opacity: 1;
+  visibility: visible;
+}
+
+.date-picker-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(3px);
+}
+
+.date-picker-content {
+  position: relative;
+  background: var(--white);
+  border-radius: 16px;
+  padding: 0;
+  max-width: 420px;
+  width: 90%;
+  max-height: 85vh;
+  overflow: hidden;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+  transform: scale(0.9) translateY(20px);
+  transition: transform 0.3s ease;
+}
+
+.date-picker-modal.active .date-picker-content {
+  transform: scale(1) translateY(0);
+}
+
+.date-picker-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 20px;
+  border-bottom: 2px solid var(--border-color);
+  background: linear-gradient(135deg, var(--primary-blue) 0%, var(--dark-blue) 100%);
+}
+
+.date-picker-header h3 {
+  margin: 0;
+  font-size: 20px;
+  color: var(--white);
+  font-weight: 600;
+}
+
+.date-picker-close {
+  background: transparent;
+  border: none;
+  font-size: 32px;
+  color: var(--white);
+  cursor: pointer;
+  line-height: 1;
+  padding: 0;
+  width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  transition: all 0.3s ease;
+}
+
+.date-picker-close:hover {
+  background: rgba(255, 255, 255, 0.2);
+  transform: rotate(90deg);
+}
+
 /* Custom Date Picker Styles */
 .custom-date-picker {
   display: grid;
   grid-template-columns: repeat(7, 1fr);
-  gap: 8px;
-  padding: 20px;
-  background: #f8f9fa;
-  border-radius: 12px;
-  margin-top: 15px;
+  gap: 6px;
+  padding: 16px;
+  background: var(--white);
+  max-height: 50vh;
+  overflow-y: auto;
 }
 
 .date-cell {
@@ -592,12 +753,13 @@ body {
   align-items: center;
   justify-content: center;
   border-radius: 8px;
-  font-size: 14px;
+  font-size: 13px;
   cursor: pointer;
   transition: all 0.2s ease;
-  background: var(--white);
-  border: 2px solid #e0e0e0;
+  background: #f8f9fa;
+  border: 1.5px solid #e0e0e0;
   position: relative;
+  font-weight: 500;
 }
 
 .date-cell.header {
@@ -633,23 +795,57 @@ body {
   font-weight: 600;
 }
 
-.selected-dates-display {
-  margin-top: 15px;
-  padding: 12px 16px;
-  background: var(--light-blue);
-  border-radius: 8px;
-  font-size: 15px;
-  color: var(--text-dark);
+.date-picker-footer {
+  display: flex;
+  gap: 12px;
+  padding: 16px 20px;
+  border-top: 2px solid var(--border-color);
+  background: #f8f9fa;
 }
 
-.selected-dates-display strong {
-  color: var(--primary-blue);
+.date-picker-clear {
+  flex: 1;
+  padding: 12px;
+  background: var(--white);
+  border: 2px solid var(--border-color);
+  border-radius: 8px;
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--text-dark);
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-family: var(--font-main);
+}
+
+.date-picker-clear:hover {
+  background: #f8f9fa;
+  border-color: var(--error-red);
+  color: var(--error-red);
+}
+
+.date-picker-done {
+  flex: 2;
+  padding: 12px;
+  background: linear-gradient(135deg, var(--primary-blue) 0%, var(--dark-blue) 100%);
+  border: none;
+  border-radius: 8px;
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--white);
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-family: var(--font-main);
+  box-shadow: 0 4px 12px rgba(0, 87, 163, 0.3);
+}
+
+.date-picker-done:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(0, 87, 163, 0.4);
 }
 
 #selectedDatesCount {
   font-weight: 700;
-  color: var(--bright-yellow);
-  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1);
+  color: var(--primary-blue);
 }
 
 /* Order Summary Styles */
@@ -716,7 +912,7 @@ body {
 
 .submit-btn {
   width: 100%;
-  background: var(--bright-yellow);
+  background: linear-gradient(135deg, var(--bright-yellow) 0%, #ffd700 100%);
   color: var(--text-dark);
   border: none;
   padding: 18px;
@@ -724,11 +920,14 @@ body {
   font-size: 18px;
   font-weight: 700;
   cursor: pointer;
-  transition: all 0.3s;
+  transition: all 0.3s ease;
   box-shadow: 0 4px 15px rgba(244, 196, 48, 0.3);
+  position: relative;
+  overflow: hidden;
 }
 
-.submit-btn:hover {
+.submit-btn::before {
+  content: '';\n  position: absolute;\n  top: 50%;\n  left: 50%;\n  width: 0;\n  height: 0;\n  border-radius: 50%;\n  background: rgba(255, 255, 255, 0.3);\n  transform: translate(-50%, -50%);\n  transition: width 0.6s, height 0.6s;\n}\n\n.submit-btn:hover::before {\n  width: 300px;\n  height: 300px;\n}\n\n.submit-btn:hover {
   transform: translateY(-2px);
   box-shadow: 0 6px 20px rgba(244, 196, 48, 0.5);
 }
@@ -737,27 +936,47 @@ body {
   transform: translateY(0);
 }
 
+.submit-btn:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+  transform: none !important;
+}
+
 .form-message {
   margin-top: 20px;
-  padding: 15px;
+  padding: 15px 18px;
   border-radius: 10px;
   display: none;
   text-align: center;
   font-weight: 500;
+  animation: slideInDown 0.4s ease;
+}
+
+@keyframes slideInDown {
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 .form-message.success {
-  background: #d4edda;
+  background: linear-gradient(135deg, #d4edda 0%, #c3e6cb 100%);
   color: #155724;
-  border: 1px solid #c3e6cb;
+  border: 2px solid #28a745;
   display: block;
+  box-shadow: 0 4px 12px rgba(40, 167, 69, 0.2);
 }
 
 .form-message.error {
-  background: #f8d7da;
+  background: linear-gradient(135deg, #f8d7da 0%, #f5c6cb 100%);
   color: #721c24;
-  border: 1px solid #f5c6cb;
+  border: 2px solid #dc3545;
   display: block;
+  box-shadow: 0 4px 12px rgba(220, 53, 69, 0.2);
 }
 
 /* Order Info Sidebar */
@@ -772,6 +991,12 @@ body {
   padding: 25px;
   border-radius: 15px;
   border-left: 4px solid var(--primary-blue);
+  transition: all 0.3s ease;
+}
+
+.info-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 87, 163, 0.1);
 }
 
 .info-card h3 {
@@ -1666,59 +1891,167 @@ body {
     font-size: 32px;
   }
 
-  .order-wrapper,
-  .login-card,
-  .confirmation-wrapper {
-    padding: 30px 20px;
+  .order-section {
+    padding: 30px 0;
+  }
+
+  .order-wrapper {
+    border-radius: 15px;
+    margin: 0 10px;
+  }
+
+  .order-header {
+    padding: 25px 20px;
+  }
+
+  .order-header h1 {
+    font-size: 26px;
+    margin-bottom: 8px;
+  }
+
+  .order-header p {
+    font-size: 14px;
+  }
+
+  .order-content {
+    grid-template-columns: 1fr;
+    gap: 0;
+    padding: 20px 15px;
+  }
+
+  .order-form .form-group {
+    margin-bottom: 18px;
+  }
+
+  .order-form label {
+    font-size: 15px;
+    margin-bottom: 6px;
+  }
+
+  .order-form input,
+  .order-form select {
+    padding: 12px;
+    font-size: 15px;
+    border-radius: 8px;
+  }
+
+  .form-hint {
+    font-size: 13px;
+    margin-top: 4px;
   }
 
   /* Duration options responsive */
   .duration-options {
     grid-template-columns: repeat(2, 1fr);
-    gap: 10px;
+    gap: 8px;
   }
 
   .duration-card {
-    padding: 12px 8px;
+    padding: 10px 6px;
+    border-radius: 8px;
+    min-height: 65px;
+    gap: 4px;
   }
 
   .duration-icon {
-    font-size: 24px;
+    font-size: 22px;
   }
 
   .duration-label {
-    font-size: 13px;
+    font-size: 12px;
+  }
+
+  /* Date picker modal responsive */
+  .date-picker-content {
+    width: 95%;
+    max-width: 95%;
+    max-height: 90vh;
+  }
+
+  .date-picker-header {
+    padding: 16px;
+  }
+
+  .date-picker-header h3 {
+    font-size: 18px;
+  }
+
+  .date-picker-close {
+    width: 32px;
+    height: 32px;
+    font-size: 28px;
+  }
+
+  .date-picker-trigger {
+    padding: 12px 14px;
+    font-size: 15px;
+  }
+
+  .trigger-icon {
+    font-size: 18px;
   }
 
   /* Custom date picker responsive */
   .custom-date-picker {
-    gap: 6px;
-    padding: 15px;
+    gap: 4px;
+    padding: 12px;
   }
 
   .date-cell {
-    font-size: 12px;
+    font-size: 11px;
+    border-radius: 6px;
+    border-width: 1.5px;
   }
 
   .date-cell.header {
-    font-size: 11px;
+    font-size: 10px;
+  }
+
+  .date-picker-footer {
+    padding: 12px 16px;
+    gap: 10px;
+  }
+
+  .date-picker-clear,
+  .date-picker-done {
+    padding: 10px;
+    font-size: 14px;
   }
 
   /* Order summary responsive */
   .order-summary {
-    padding: 15px;
+    padding: 12px 15px;
+    border-radius: 10px;
+    margin-bottom: 20px;
   }
 
   .summary-row {
-    font-size: 14px;
+    font-size: 13px;
+    padding: 8px 0;
   }
 
   .summary-row.total-row {
-    font-size: 18px;
+    font-size: 16px;
+    padding-top: 12px;
   }
 
   .summary-row.total-row span:last-child {
-    font-size: 20px;
+    font-size: 18px;
+  }
+
+  .submit-btn {
+    padding: 14px;
+    font-size: 16px;
+    border-radius: 8px;
+  }
+
+  .order-info {
+    display: none;
+  }
+
+  .login-card,
+  .confirmation-wrapper {
+    padding: 30px 20px;
   }
 
   .stats-grid {
@@ -1757,8 +2090,8 @@ body {
     font-size: 22px;
   }
 
-  .hero-title {
-    font-size: 24px;
+  /* Extra compact for very small screens */
+  .order-section {\n    padding: 20px 0;\n  }\n\n  .order-wrapper {\n    margin: 0 5px;\n    border-radius: 12px;\n  }\n\n  .order-header {\n    padding: 20px 15px;\n  }\n\n  .order-header h1 {\n    font-size: 22px;\n  }\n\n  .order-header p {\n    font-size: 13px;\n  }\n\n  .order-content {\n    padding: 15px 12px;\n  }\n\n  .order-form .form-group {\n    margin-bottom: 15px;\n  }\n\n  .order-form label {\n    font-size: 14px;\n  }\n\n  .order-form input,\n  .order-form select {\n    padding: 11px;\n    font-size: 14px;\n  }\n\n  .duration-options {\n    gap: 6px;\n  }\n\n  .duration-card {\n    padding: 8px 4px;\n    min-height: 60px;\n  }\n\n  .duration-icon {\n    font-size: 20px;\n  }\n\n  .duration-label {\n    font-size: 11px;\n  }\n\n  .custom-date-picker {\n    padding: 10px;\n    gap: 3px;\n  }\n\n  .date-cell {\n    font-size: 10px;\n  }\n\n  .order-summary {\n    padding: 10px 12px;\n  }\n\n  .summary-row {\n    font-size: 12px;\n    padding: 6px 0;\n  }\n\n  .summary-row.total-row {\n    font-size: 15px;\n  }\n\n  .summary-row.total-row span:last-child {\n    font-size: 17px;\n  }\n\n  .submit-btn {\n    padding: 13px;\n    font-size: 15px;\n  }\n\n  /* Date picker modal mobile */\n  .date-picker-content {\n    width: 98%;\n    border-radius: 12px;\n  }\n\n  .date-picker-header {\n    padding: 14px;\n  }\n\n  .date-picker-header h3 {\n    font-size: 16px;\n  }\n\n  .date-picker-trigger {\n    padding: 11px 12px;\n    font-size: 14px;\n  }\n\n  .trigger-icon {\n    font-size: 16px;\n  }\n\n  .date-picker-footer {\n    padding: 10px 12px;\n    gap: 8px;\n  }\n\n  .date-picker-clear,\n  .date-picker-done {\n    padding: 9px;\n    font-size: 13px;\n  }\n\n  .hero-title {\n    font-size: 24px;
   }
 
   .product-info {

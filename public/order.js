@@ -260,6 +260,15 @@ function initializeDurationOptions() {
         customDatesGroup.style.display = "block";
         document.getElementById("date").required = false;
         document.getElementById("startDate").required = false;
+
+        // Auto-open date picker modal when custom is selected
+        setTimeout(() => {
+          const modal = document.getElementById("datePickerModal");
+          if (modal) {
+            modal.classList.add("active");
+            document.body.style.overflow = "hidden";
+          }
+        }, 100);
       } else {
         // Preset durations (3, 7, 10, 30)
         singleDateGroup.style.display = "none";
@@ -280,6 +289,41 @@ function initializeDurationOptions() {
 // Initialize custom date picker calendar
 function initializeCustomDatePicker() {
   const pickerContainer = document.getElementById("customDatePicker");
+  const modal = document.getElementById("datePickerModal");
+  const trigger = document.getElementById("datePickerTrigger");
+  const closeBtn = document.getElementById("datePickerClose");
+  const overlay = document.getElementById("datePickerOverlay");
+  const doneBtn = document.getElementById("datePickerDone");
+  const clearBtn = document.getElementById("datePickerClear");
+
+  // Open modal
+  trigger.addEventListener("click", () => {
+    modal.classList.add("active");
+    document.body.style.overflow = "hidden";
+  });
+
+  // Close modal functions
+  const closeModal = () => {
+    modal.classList.remove("active");
+    document.body.style.overflow = "";
+  };
+
+  closeBtn.addEventListener("click", closeModal);
+  overlay.addEventListener("click", closeModal);
+
+  doneBtn.addEventListener("click", () => {
+    updateOrderSummary();
+    closeModal();
+  });
+
+  clearBtn.addEventListener("click", () => {
+    selectedDates.clear();
+    document.querySelectorAll(".date-cell.selected").forEach((cell) => {
+      cell.classList.remove("selected");
+    });
+    updateOrderSummary();
+  });
+
   const today = new Date();
   today.setHours(0, 0, 0, 0);
 
