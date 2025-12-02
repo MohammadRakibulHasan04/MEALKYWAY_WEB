@@ -1,317 +1,324 @@
 // Admin Panel JavaScript
 const API_URL = window.location.origin;
-let autoRefreshInterval;
 
 // Hall data for different institutions
 const hallData = {
-    RU: [
-        'শের-ই-বাংলা ফজলুল হক হল',
-        'শাহ্‌ মখদুম হল',
-        'নবাব আব্দুল লতিফ হল',
-        'সৈয়দ আমীর আলী হল',
-        'শহীদ শামসুজ্জোহা হল',
-        'শহীদ হবিবুর রহমান হল',
-        'মতিহার হল',
-        'মাদার বখ্‌শ হল',
-        'হোসেন শহীদ সোহ্‌রাওয়ার্দী হল',
-        'শহীদ জিয়াউর রহমান হল',
-        'বিজয়-২৪ হল'
-    ],
-    RMC: [
-        'শহীদ শাহ মাইনুল আহসান চৌধুরী পিংকু ছাত্রাবাস',
-        'শহীদ মুক্তিযোদ্ধা কাজী নূরুন্নবী ছাত্রাবাস',
-        'শহীদ জামিল আখতার রতন ইন্টার্ন হোস্টেল',
-        'Nursing Hostel'
-    ]
+  RU: [
+    "শের-ই-বাংলা ফজলুল হক হল",
+    "শাহ্‌ মখদুম হল",
+    "নবাব আব্দুল লতিফ হল",
+    "সৈয়দ আমীর আলী হল",
+    "শহীদ শামসুজ্জোহা হল",
+    "শহীদ হবিবুর রহমান হল",
+    "মতিহার হল",
+    "মাদার বখ্‌শ হল",
+    "হোসেন শহীদ সোহ্‌রাওয়ার্দী হল",
+    "শহীদ জিয়াউর রহমান হল",
+    "বিজয়-২৪ হল",
+  ],
+  RMC: [
+    "শহীদ শাহ মাইনুল আহসান চৌধুরী পিংকু ছাত্রাবাস",
+    "শহীদ মুক্তিযোদ্ধা কাজী নূরুন্নবী ছাত্রাবাস",
+    "শহীদ জামিল আখতার রতন ইন্টার্ন হোস্টেল",
+    "Nursing Hostel",
+  ],
 };
 
 // Short form mapping for hall names (for display in admin panel)
 const hallShortForm = {
-    // RU Halls
-    'শের-ই-বাংলা ফজলুল হক হল': 'RU-ফজলুল হক',
-    'শাহ্‌ মখদুম হল': 'RU-মখদুম',
-    'নবাব আব্দুল লতিফ হল': 'RU-লতিফ',
-    'সৈয়দ আমীর আলী হল': 'RU-আমীর আলী',
-    'শহীদ শামসুজ্জোহা হল': 'RU-শামসুজ্জোহা',
-    'শহীদ হবিবুর রহমান হল': 'RU-হবিবুর রহমান',
-    'মতিহার হল': 'RU-মতিহার',
-    'মাদার বখ্‌শ হল': 'RU-মাদার বখ্‌শ',
-    'হোসেন শহীদ সোহ্‌রাওয়ার্দী হল': 'RU-সোহ্‌রাওয়ার্দী',
-    'শহীদ জিয়াউর রহমান হল': 'RU-জিয়া',
-    'বিজয়-২৪ হল': 'RU-বিজয়-২৪',
-    // RMC Halls
-    'শহীদ শাহ মাইনুল আহসান চৌধুরী পিংকু ছাত্রাবাস': 'RMC-পিংকু',
-    'শহীদ মুক্তিযোদ্ধা কাজী নূরুন্নবী ছাত্রাবাস': 'RMC-নূরুন্নবী',
-    'শহীদ জামিল আখতার রতন ইন্টার্ন হোস্টেল': 'RMC-Intern',
-    'Nursing Hostel': 'RMC-Nursing'
+  // RU Halls
+  "শের-ই-বাংলা ফজলুল হক হল": "RU-ফজলুল হক",
+  "শাহ্‌ মখদুম হল": "RU-মখদুম",
+  "নবাব আব্দুল লতিফ হল": "RU-লতিফ",
+  "সৈয়দ আমীর আলী হল": "RU-আমীর আলী",
+  "শহীদ শামসুজ্জোহা হল": "RU-শামসুজ্জোহা",
+  "শহীদ হবিবুর রহমান হল": "RU-হবিবুর রহমান",
+  "মতিহার হল": "RU-মতিহার",
+  "মাদার বখ্‌শ হল": "RU-মাদার বখ্‌শ",
+  "হোসেন শহীদ সোহ্‌রাওয়ার্দী হল": "RU-সোহ্‌রাওয়ার্দী",
+  "শহীদ জিয়াউর রহমান হল": "RU-জিয়া",
+  "বিজয়-২৪ হল": "RU-বিজয়-২৪",
+  // RMC Halls
+  "শহীদ শাহ মাইনুল আহসান চৌধুরী পিংকু ছাত্রাবাস": "RMC-পিংকু",
+  "শহীদ মুক্তিযোদ্ধা কাজী নূরুন্নবী ছাত্রাবাস": "RMC-নূরুন্নবী",
+  "শহীদ জামিল আখতার রতন ইন্টার্ন হোস্টেল": "RMC-Intern",
+  "Nursing Hostel": "RMC-Nursing",
 };
 
 // Function to get short form of hall name
 function getHallShortForm(fullHallName) {
-    // Extract just the hall name without institution prefix
-    const hallOnly = fullHallName.includes(' - ') ? fullHallName.split(' - ')[1] : fullHallName;
-    return hallShortForm[hallOnly] || hallOnly;
+  // Extract just the hall name without institution prefix
+  const hallOnly = fullHallName.includes(" - ")
+    ? fullHallName.split(" - ")[1]
+    : fullHallName;
+  return hallShortForm[hallOnly] || hallOnly;
 }
 
 // Log to verify script is loading
-console.log('Admin Panel JS loaded successfully');
-console.log('API URL:', API_URL);
+console.log("Admin Panel JS loaded successfully");
+console.log("API URL:", API_URL);
 
-document.addEventListener('DOMContentLoaded', async () => {
-    console.log('DOM Content Loaded');
-    
-    try {
-        // Check authentication FIRST and wait for it
-        await checkAuth();
+document.addEventListener("DOMContentLoaded", async () => {
+  console.log("DOM Content Loaded");
 
-        // Only initialize if authenticated
-        console.log('Authentication passed, initializing panel...');
-        loadStats();
-        loadOrders();
+  try {
+    // Check authentication FIRST and wait for it
+    await checkAuth();
 
-        // Set up auto-refresh every 30 seconds
-        startAutoRefresh();
+    // Only initialize if authenticated
+    console.log("Authentication passed, initializing panel...");
+    loadStats();
+    loadOrders();
 
-        // Setup institution filter
-        setupInstitutionFilter();
+    // Setup institution filter
+    setupInstitutionFilter();
 
-        // Event Listeners
-        const logoutBtn = document.getElementById('logoutBtn');
-        const applyFiltersBtn = document.getElementById('applyFilters');
-        const clearFiltersBtn = document.getElementById('clearFilters');
-        const printOrdersBtn = document.getElementById('printOrders');
-        const editOrderForm = document.getElementById('editOrderForm');
-        const editModal = document.getElementById('editModal');
-        
-        console.log('Elements found:', {
-            logoutBtn: !!logoutBtn,
-            applyFiltersBtn: !!applyFiltersBtn,
-            clearFiltersBtn: !!clearFiltersBtn,
-            printOrdersBtn: !!printOrdersBtn,
-            editOrderForm: !!editOrderForm,
-            editModal: !!editModal
-        });
-        
-        if (logoutBtn) logoutBtn.addEventListener('click', logout);
-        if (applyFiltersBtn) applyFiltersBtn.addEventListener('click', () => {
-            loadOrders();
-            loadStats();
-        });
-        if (clearFiltersBtn) clearFiltersBtn.addEventListener('click', clearFilters);
-        if (printOrdersBtn) printOrdersBtn.addEventListener('click', printOrders);
-        if (editOrderForm) editOrderForm.addEventListener('submit', saveOrder);
+    // Event Listeners
+    const logoutBtn = document.getElementById("logoutBtn");
+    const refreshBtn = document.getElementById("refreshBtn");
+    const applyFiltersBtn = document.getElementById("applyFilters");
+    const clearFiltersBtn = document.getElementById("clearFilters");
+    const printOrdersBtn = document.getElementById("printOrders");
+    const editOrderForm = document.getElementById("editOrderForm");
+    const editModal = document.getElementById("editModal");
 
-        // Notice and Export listeners
-        const updateNoticeBtn = document.getElementById('updateNoticeBtn');
-        const exportCsvBtn = document.getElementById('exportCsvBtn');
-        if (updateNoticeBtn) updateNoticeBtn.addEventListener('click', updateNotice);
-        if (exportCsvBtn) exportCsvBtn.addEventListener('click', exportOrders);
-
-        // Load current notice
-        loadNotice();
-
-        // Close modal listeners
-        document.querySelectorAll('.close-modal').forEach(btn => {
-            btn.addEventListener('click', closeModal);
-        });
-
-        // Close modal on outside click
-        if (editModal) {
-            editModal.addEventListener('click', (e) => {
-                if (e.target.id === 'editModal') {
-                    closeModal();
-                }
-            });
-        }
-        
-        console.log('All event listeners attached successfully');
-    } catch (error) {
-        console.error('Error in DOMContentLoaded:', error);
+    // Refresh button
+    if (refreshBtn) {
+      refreshBtn.addEventListener("click", () => {
+        refreshBtn.disabled = true;
+        refreshBtn.innerHTML = "<span>🔄</span><span>Refreshing...</span>";
+        refreshData();
+        setTimeout(() => {
+          refreshBtn.disabled = false;
+          refreshBtn.innerHTML = "<span>🔄</span><span>Refresh</span>";
+        }, 1000);
+      });
     }
+
+    console.log("Elements found:", {
+      logoutBtn: !!logoutBtn,
+      refreshBtn: !!refreshBtn,
+      applyFiltersBtn: !!applyFiltersBtn,
+      clearFiltersBtn: !!clearFiltersBtn,
+      printOrdersBtn: !!printOrdersBtn,
+      editOrderForm: !!editOrderForm,
+      editModal: !!editModal,
+    });
+
+    if (logoutBtn) logoutBtn.addEventListener("click", logout);
+    if (applyFiltersBtn)
+      applyFiltersBtn.addEventListener("click", () => {
+        loadOrders();
+        loadStats();
+      });
+    if (clearFiltersBtn)
+      clearFiltersBtn.addEventListener("click", clearFilters);
+    if (printOrdersBtn) printOrdersBtn.addEventListener("click", printOrders);
+    if (editOrderForm) editOrderForm.addEventListener("submit", saveOrder);
+
+    // Notice and Export listeners
+    const updateNoticeBtn = document.getElementById("updateNoticeBtn");
+    const exportCsvBtn = document.getElementById("exportCsvBtn");
+    if (updateNoticeBtn)
+      updateNoticeBtn.addEventListener("click", updateNotice);
+    if (exportCsvBtn) exportCsvBtn.addEventListener("click", exportOrders);
+
+    // Load current notice
+    loadNotice();
+
+    // Close modal listeners
+    document.querySelectorAll(".close-modal").forEach((btn) => {
+      btn.addEventListener("click", closeModal);
+    });
+
+    // Close modal on outside click
+    if (editModal) {
+      editModal.addEventListener("click", (e) => {
+        if (e.target.id === "editModal") {
+          closeModal();
+        }
+      });
+    }
+
+    console.log("All event listeners attached successfully");
+  } catch (error) {
+    console.error("Error in DOMContentLoaded:", error);
+  }
 });
 
-// Auto-refresh functionality
-function startAutoRefresh() {
-    // Refresh every 30 seconds
-    autoRefreshInterval = setInterval(() => {
-        loadStats();
-        loadOrders();
-    }, 30000);
-}
-
-function stopAutoRefresh() {
-    if (autoRefreshInterval) {
-        clearInterval(autoRefreshInterval);
-    }
+// Manual refresh functionality
+function refreshData() {
+  loadStats();
+  loadOrders();
 }
 
 // Check authentication
 async function checkAuth() {
-    try {
-        // Check for auth token in localStorage
-        const authToken = localStorage.getItem('adminAuthToken');
-        
-        console.log('=== AUTH CHECK ===');
-        console.log('Token exists:', !!authToken);
-        console.log('Token length:', authToken ? authToken.length : 0);
-        
-        if (!authToken) {
-            console.log('No auth token found, redirecting to login');
-            window.location.href = '/admin-login.html';
-            return;
-        }
+  try {
+    // Check for auth token in localStorage
+    const authToken = localStorage.getItem("adminAuthToken");
 
-        console.log('Sending auth check request...');
-        const response = await fetch(`${API_URL}/api/admin/check`, {
-            credentials: 'include',
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${authToken}`
-            }
-        });
-        
-        console.log('Auth check response status:', response.status);
-        
-        if (!response.ok) {
-            console.log('❌ Auth check failed with status:', response.status);
-            localStorage.removeItem('adminAuthToken');
-            window.location.href = '/admin-login.html';
-            return;
-        }
-        
-        const data = await response.json();
-        console.log('Auth check response data:', data);
+    console.log("=== AUTH CHECK ===");
+    console.log("Token exists:", !!authToken);
+    console.log("Token length:", authToken ? authToken.length : 0);
 
-        if (!data.authenticated) {
-            console.log('❌ Not authenticated, redirecting to login');
-            localStorage.removeItem('adminAuthToken');
-            window.location.href = '/admin-login.html';
-            return;
-        }
-        
-        const username = data.user?.username || 'Admin';
-        console.log('✅ Authenticated as:', username);
-        const usernameElement = document.getElementById('adminUsername');
-        if (usernameElement) {
-            usernameElement.textContent = `👤 ${username}`;
-        }
-        
-        // Return success
-        return true;
-    } catch (error) {
-        console.error('❌ Auth check error:', error);
-        localStorage.removeItem('adminAuthToken');
-        window.location.href = '/admin-login.html';
-        throw error;
+    if (!authToken) {
+      console.log("No auth token found, redirecting to login");
+      window.location.href = "/admin-login.html";
+      return;
     }
+
+    console.log("Sending auth check request...");
+    const response = await fetch(`${API_URL}/api/admin/check`, {
+      credentials: "include",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${authToken}`,
+      },
+    });
+
+    console.log("Auth check response status:", response.status);
+
+    if (!response.ok) {
+      console.log("❌ Auth check failed with status:", response.status);
+      localStorage.removeItem("adminAuthToken");
+      window.location.href = "/admin-login.html";
+      return;
+    }
+
+    const data = await response.json();
+    console.log("Auth check response data:", data);
+
+    if (!data.authenticated) {
+      console.log("❌ Not authenticated, redirecting to login");
+      localStorage.removeItem("adminAuthToken");
+      window.location.href = "/admin-login.html";
+      return;
+    }
+
+    const username = data.user?.username || "Admin";
+    console.log("✅ Authenticated as:", username);
+    const usernameElement = document.getElementById("adminUsername");
+    if (usernameElement) {
+      usernameElement.textContent = `👤 ${username}`;
+    }
+
+    // Return success
+    return true;
+  } catch (error) {
+    console.error("❌ Auth check error:", error);
+    localStorage.removeItem("adminAuthToken");
+    window.location.href = "/admin-login.html";
+    throw error;
+  }
 }
 
 // Logout
 async function logout() {
-    console.log('Logout clicked');
-    try {
-        const authToken = localStorage.getItem('adminAuthToken');
-        const response = await fetch(`${API_URL}/api/admin/logout`, { 
-            method: 'POST',
-            credentials: 'include',
-            headers: {
-                'Authorization': `Bearer ${authToken}`
-            }
-        });
-        console.log('Logout response:', response.status);
-        localStorage.removeItem('adminAuthToken');
-        window.location.href = '/admin-login.html';
-    } catch (error) {
-        console.error('Logout error:', error);
-        localStorage.removeItem('adminAuthToken');
-        window.location.href = '/admin-login.html';
-    }
+  console.log("Logout clicked");
+  try {
+    const authToken = localStorage.getItem("adminAuthToken");
+    const response = await fetch(`${API_URL}/api/admin/logout`, {
+      method: "POST",
+      credentials: "include",
+      headers: {
+        Authorization: `Bearer ${authToken}`,
+      },
+    });
+    console.log("Logout response:", response.status);
+    localStorage.removeItem("adminAuthToken");
+    window.location.href = "/admin-login.html";
+  } catch (error) {
+    console.error("Logout error:", error);
+    localStorage.removeItem("adminAuthToken");
+    window.location.href = "/admin-login.html";
+  }
 }
 
 // Load statistics
 async function loadStats() {
-    console.log('loadStats called');
-    try {
-        const authToken = localStorage.getItem('adminAuthToken');
-        const response = await fetch(`${API_URL}/api/admin/orders`, {
-            credentials: 'include',
-            headers: {
-                'Authorization': `Bearer ${authToken}`
-            }
-        });
-        
-        console.log('Stats response status:', response.status);
-        
-        if (!response.ok) {
-            console.error('Stats API error:', response.status);
-            if (response.status === 401) {
-                console.log('Unauthorized in loadStats, clearing token');
-                localStorage.removeItem('adminAuthToken');
-                window.location.href = '/admin-login.html';
-            }
-            return;
-        }
-        
-        const data = await response.json();
-        console.log('Stats loaded:', data);
+  console.log("loadStats called");
+  try {
+    const authToken = localStorage.getItem("adminAuthToken");
+    const response = await fetch(`${API_URL}/api/admin/orders`, {
+      credentials: "include",
+      headers: {
+        Authorization: `Bearer ${authToken}`,
+      },
+    });
 
-        const stats = data.stats || {};
-        const todayOrdersEl = document.getElementById('todayOrders');
-        const todayQuantityEl = document.getElementById('todayQuantity');
-        const totalCustomersEl = document.getElementById('totalCustomers');
-        const totalOrdersEl = document.getElementById('totalOrders');
-        
-        if (todayOrdersEl) todayOrdersEl.textContent = stats.todayOrders || 0;
-        if (todayQuantityEl) todayQuantityEl.textContent = stats.todayQuantity || 0;
-        if (totalCustomersEl) totalCustomersEl.textContent = stats.totalOrders || 0; // Use totalOrders for customers count
-        if (totalOrdersEl) totalOrdersEl.textContent = stats.totalQuantity || 0;
-        
-        console.log('Stats updated in DOM');
-    } catch (error) {
-        console.error('Error loading stats:', error);
+    console.log("Stats response status:", response.status);
+
+    if (!response.ok) {
+      console.error("Stats API error:", response.status);
+      if (response.status === 401) {
+        console.log("Unauthorized in loadStats, clearing token");
+        localStorage.removeItem("adminAuthToken");
+        window.location.href = "/admin-login.html";
+      }
+      return;
     }
+
+    const data = await response.json();
+    console.log("Stats loaded:", data);
+
+    const stats = data.stats || {};
+    const todayOrdersEl = document.getElementById("todayOrders");
+    const todayQuantityEl = document.getElementById("todayQuantity");
+    const totalCustomersEl = document.getElementById("totalCustomers");
+    const totalOrdersEl = document.getElementById("totalOrders");
+
+    if (todayOrdersEl) todayOrdersEl.textContent = stats.todayOrders || 0;
+    if (todayQuantityEl) todayQuantityEl.textContent = stats.todayQuantity || 0;
+    if (totalCustomersEl) totalCustomersEl.textContent = stats.totalOrders || 0; // Use totalOrders for customers count
+    if (totalOrdersEl) totalOrdersEl.textContent = stats.totalQuantity || 0;
+
+    console.log("Stats updated in DOM");
+  } catch (error) {
+    console.error("Error loading stats:", error);
+  }
 }
 
 // Setup institution filter
 function setupInstitutionFilter() {
-    const institutionFilter = document.getElementById('filterInstitution');
-    const hallFilter = document.getElementById('filterHall');
-    
-    if (institutionFilter && hallFilter) {
-        institutionFilter.addEventListener('change', () => {
-            const institution = institutionFilter.value;
-            hallFilter.innerHTML = '<option value="">All Halls</option>';
-            
-            if (institution && hallData[institution]) {
-                hallData[institution].forEach(hall => {
-                    const option = document.createElement('option');
-                    option.value = hall;
-                    option.textContent = hall;
-                    hallFilter.appendChild(option);
-                });
-            }
+  const institutionFilter = document.getElementById("filterInstitution");
+  const hallFilter = document.getElementById("filterHall");
+
+  if (institutionFilter && hallFilter) {
+    institutionFilter.addEventListener("change", () => {
+      const institution = institutionFilter.value;
+      hallFilter.innerHTML = '<option value="">All Halls</option>';
+
+      if (institution && hallData[institution]) {
+        hallData[institution].forEach((hall) => {
+          const option = document.createElement("option");
+          option.value = hall;
+          option.textContent = hall;
+          hallFilter.appendChild(option);
         });
-    }
+      }
+    });
+  }
 }
 
 // Load orders with filters
 async function loadOrders() {
-    const institution = document.getElementById('filterInstitution').value;
-    const hall = document.getElementById('filterHall').value;
-    const contactNumber = document.getElementById('filterContact').value;
-    const dateFrom = document.getElementById('filterDateFrom').value;
-    const dateTo = document.getElementById('filterDateTo').value;
+  const institution = document.getElementById("filterInstitution").value;
+  const hall = document.getElementById("filterHall").value;
+  const contactNumber = document.getElementById("filterContact").value;
+  const dateFrom = document.getElementById("filterDateFrom").value;
+  const dateTo = document.getElementById("filterDateTo").value;
 
-    const params = new URLSearchParams();
-    if (institution) params.append('institution', institution);
-    if (hall) params.append('hall', hall);
-    if (contactNumber) params.append('contactNumber', contactNumber);
-    if (dateFrom) params.append('dateFrom', dateFrom);
-    if (dateTo) params.append('dateTo', dateTo);
+  const params = new URLSearchParams();
+  if (institution) params.append("institution", institution);
+  if (hall) params.append("hall", hall);
+  if (contactNumber) params.append("contactNumber", contactNumber);
+  if (dateFrom) params.append("dateFrom", dateFrom);
+  if (dateTo) params.append("dateTo", dateTo);
 
-    // Show loading state
-    const tbody = document.getElementById('ordersTableBody');
-    tbody.innerHTML = `
+  // Show loading state
+  const tbody = document.getElementById("ordersTableBody");
+  tbody.innerHTML = `
         <tr class="no-data">
             <td colspan="9">
                 <div style="padding: 40px; text-align: center;">
@@ -322,32 +329,35 @@ async function loadOrders() {
         </tr>
     `;
 
-    try {
-        const authToken = localStorage.getItem('adminAuthToken');
-        const response = await fetch(`${API_URL}/api/admin/orders?${params.toString()}`, {
-            credentials: 'include',
-            headers: {
-                'Authorization': `Bearer ${authToken}`
-            }
-        });
-        
-        console.log('Orders response status:', response.status);
-        
-        if (!response.ok) {
-            console.error('Orders API error:', response.status, response.statusText);
-            if (response.status === 401) {
-                window.location.href = '/admin-login.html';
-                return;
-            }
-        }
-        
-        const data = await response.json();
-        console.log('Orders data received:', data);
+  try {
+    const authToken = localStorage.getItem("adminAuthToken");
+    const response = await fetch(
+      `${API_URL}/api/admin/orders?${params.toString()}`,
+      {
+        credentials: "include",
+        headers: {
+          Authorization: `Bearer ${authToken}`,
+        },
+      }
+    );
 
-        displayOrders(data.orders || []);
-    } catch (error) {
-        console.error('Error loading orders:', error);
-        tbody.innerHTML = `
+    console.log("Orders response status:", response.status);
+
+    if (!response.ok) {
+      console.error("Orders API error:", response.status, response.statusText);
+      if (response.status === 401) {
+        window.location.href = "/admin-login.html";
+        return;
+      }
+    }
+
+    const data = await response.json();
+    console.log("Orders data received:", data);
+
+    displayOrders(data.orders || []);
+  } catch (error) {
+    console.error("Error loading orders:", error);
+    tbody.innerHTML = `
             <tr class="no-data">
                 <td colspan="9">
                     <div style="padding: 40px; text-align: center;">
@@ -359,29 +369,35 @@ async function loadOrders() {
                 </td>
             </tr>
         `;
-    }
+  }
 }
 
 // Display orders in table
 function displayOrders(orders) {
-    const tbody = document.getElementById('ordersTableBody');
-    const ordersCount = document.getElementById('ordersCount');
-    const lastUpdated = document.getElementById('lastUpdated');
+  const tbody = document.getElementById("ordersTableBody");
+  const ordersCount = document.getElementById("ordersCount");
+  const lastUpdated = document.getElementById("lastUpdated");
 
-    ordersCount.textContent = orders.length;
-    
-    // Update last updated time
+  ordersCount.textContent = orders.length;
+
+  // Update last updated time (if element exists)
+  if (lastUpdated) {
     const now = new Date();
-    const timeString = now.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+    const timeString = now.toLocaleTimeString("en-US", {
+      hour: "2-digit",
+      minute: "2-digit",
+      second: "2-digit",
+    });
     lastUpdated.innerHTML = `
         <span>🔄</span>
         <span>Last updated: ${timeString}</span>
     `;
+  }
 
-    if (orders.length === 0) {
-        tbody.innerHTML = `
+  if (orders.length === 0) {
+    tbody.innerHTML = `
             <tr class="no-data">
-                <td colspan="9">
+                <td colspan="10">
                     <div style="padding: 40px; text-align: center;">
                         <div style="font-size: 48px; margin-bottom: 15px;">📦</div>
                         <div style="font-size: 18px; color: var(--text-gray); font-weight: 600;">No orders found</div>
@@ -390,283 +406,323 @@ function displayOrders(orders) {
                 </td>
             </tr>
         `;
-        return;
-    }
+    return;
+  }
 
-    tbody.innerHTML = orders.map((order, index) => `
-        <tr style="animation: fadeInUp 0.3s ease-out ${index * 0.05}s backwards;">
-            <td><span style="background: var(--light-blue); padding: 4px 12px; border-radius: 12px; font-weight: 600;">#${order.id}</span></td>
+  tbody.innerHTML = orders
+    .map(
+      (order, index) => `
+        <tr style="animation: fadeInUp 0.3s ease-out ${
+          index * 0.05
+        }s backwards;">
+            <td><span style="background: var(--light-blue); padding: 4px 12px; border-radius: 12px; font-weight: 600;">#${
+              order.id
+            }</span></td>
             <td><strong>${formatDate(order.date)}</strong></td>
-            <td><span style="color: var(--primary-blue); font-weight: 600;">${order.name}</span></td>
+            <td><span style="color: var(--primary-blue); font-weight: 600;">${
+              order.name
+            }</span></td>
             <td>${order.contact_number}</td>
             <td>${getHallShortForm(order.hall)}</td>
-            <td><span style="background: var(--bright-yellow); padding: 4px 12px; border-radius: 8px; font-weight: 600;">${order.room}</span></td>
-            <td><strong style="color: var(--primary-blue); font-size: 16px;">${order.quantity}</strong></td>
-            <td><strong style="color: var(--success-green); font-size: 16px;">৳${order.quantity * 30}</strong></td>
+            <td><span style="background: var(--bright-yellow); padding: 4px 12px; border-radius: 8px; font-weight: 600;">${
+              order.room
+            }</span></td>
+            <td><strong style="color: var(--primary-blue); font-size: 16px;">${
+              order.quantity
+            }</strong></td>
+            <td><strong style="color: var(--success-green); font-size: 16px;">৳${
+              order.quantity * 30
+            }</strong></td>
+            <td><span style="font-size: 13px; color: var(--text-gray);">${formatTimestamp(
+              order.created_at
+            )}</span></td>
             <td class="no-print">
                 <div class="action-btns">
-                    <button class="btn-edit" onclick="editOrder(${order.id})">✏️ Edit</button>
-                    <button class="btn-delete" onclick="deleteOrder(${order.id})">🗑️ Delete</button>
+                    <button class="btn-edit" onclick="editOrder(${
+                      order.id
+                    })">✏️ Edit</button>
+                    <button class="btn-delete" onclick="deleteOrder(${
+                      order.id
+                    })">🗑️ Delete</button>
                 </div>
             </td>
         </tr>
-    `).join('');
+    `
+    )
+    .join("");
 }
 
 // Format date
 function formatDate(dateString) {
-    const date = new Date(dateString);
-    const day = String(date.getDate()).padStart(2, '0');
-    const month = String(date.getMonth() + 1).padStart(2, '0');
-    const year = date.getFullYear();
-    return `${day}/${month}/${year}`;
+  const date = new Date(dateString);
+  const day = String(date.getDate()).padStart(2, "0");
+  const month = String(date.getMonth() + 1).padStart(2, "0");
+  const year = date.getFullYear();
+  return `${day}/${month}/${year}`;
+}
+
+// Format timestamp
+function formatTimestamp(timestamp) {
+  if (!timestamp) return "N/A";
+  const date = new Date(timestamp);
+  const day = String(date.getDate()).padStart(2, "0");
+  const month = String(date.getMonth() + 1).padStart(2, "0");
+  const year = date.getFullYear();
+  const hours = String(date.getHours()).padStart(2, "0");
+  const minutes = String(date.getMinutes()).padStart(2, "0");
+  return `${day}/${month}/${year} ${hours}:${minutes}`;
 }
 
 // Clear filters
 function clearFilters() {
-    document.getElementById('filterInstitution').value = '';
-    document.getElementById('filterHall').innerHTML = '<option value="">All Halls</option>';
-    document.getElementById('filterHall').value = '';
-    document.getElementById('filterContact').value = '';
-    document.getElementById('filterDateFrom').value = '';
-    document.getElementById('filterDateTo').value = '';
-    loadOrders();
+  document.getElementById("filterInstitution").value = "";
+  document.getElementById("filterHall").innerHTML =
+    '<option value="">All Halls</option>';
+  document.getElementById("filterHall").value = "";
+  document.getElementById("filterContact").value = "";
+  document.getElementById("filterDateFrom").value = "";
+  document.getElementById("filterDateTo").value = "";
+  loadOrders();
 }
 
 // Print orders
 function printOrders() {
-    window.print();
+  window.print();
 }
 
 // Edit order
 async function editOrder(orderId) {
-    try {
-        const authToken = localStorage.getItem('adminAuthToken');
-        const response = await fetch(`${API_URL}/api/admin/orders/${orderId}`, {
-            credentials: 'include',
-            headers: {
-                'Authorization': `Bearer ${authToken}`
-            }
-        });
-        const data = await response.json();
+  try {
+    const authToken = localStorage.getItem("adminAuthToken");
+    const response = await fetch(`${API_URL}/api/admin/orders/${orderId}`, {
+      credentials: "include",
+      headers: {
+        Authorization: `Bearer ${authToken}`,
+      },
+    });
+    const data = await response.json();
 
-        if (data.order) {
-            const order = data.order;
-            document.getElementById('editOrderId').value = order.id;
-            document.getElementById('editCustomerName').value = order.name;
-            document.getElementById('editContactNumber').value = order.contact_number;
-            document.getElementById('editHall').value = order.hall;
-            document.getElementById('editRoom').value = order.room;
-            document.getElementById('editQuantity').value = order.quantity;
-            document.getElementById('editDate').value = order.date;
+    if (data.order) {
+      const order = data.order;
+      document.getElementById("editOrderId").value = order.id;
+      document.getElementById("editCustomerName").value = order.name;
+      document.getElementById("editContactNumber").value = order.contact_number;
+      document.getElementById("editHall").value = order.hall;
+      document.getElementById("editRoom").value = order.room;
+      document.getElementById("editQuantity").value = order.quantity;
+      document.getElementById("editDate").value = order.date;
 
-            openModal();
-        }
-    } catch (error) {
-        console.error('Error loading order:', error);
-        alert('Failed to load order details');
+      openModal();
     }
+  } catch (error) {
+    console.error("Error loading order:", error);
+    alert("Failed to load order details");
+  }
 }
 
 // Save order
 async function saveOrder(e) {
-    e.preventDefault();
+  e.preventDefault();
 
-    const orderId = document.getElementById('editOrderId').value;
-    const quantity = document.getElementById('editQuantity').value;
-    const date = document.getElementById('editDate').value;
+  const orderId = document.getElementById("editOrderId").value;
+  const quantity = document.getElementById("editQuantity").value;
+  const date = document.getElementById("editDate").value;
 
-    const submitBtn = e.target.querySelector('button[type="submit"]');
-    submitBtn.disabled = true;
-    submitBtn.textContent = '⏳ Saving...';
+  const submitBtn = e.target.querySelector('button[type="submit"]');
+  submitBtn.disabled = true;
+  submitBtn.textContent = "⏳ Saving...";
 
-    try {
-        const authToken = localStorage.getItem('adminAuthToken');
-        const response = await fetch(`${API_URL}/api/admin/orders/${orderId}`, {
-            method: 'PUT',
-            credentials: 'include',
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${authToken}`
-            },
-            body: JSON.stringify({ quantity: parseInt(quantity), date })
-        });
+  try {
+    const authToken = localStorage.getItem("adminAuthToken");
+    const response = await fetch(`${API_URL}/api/admin/orders/${orderId}`, {
+      method: "PUT",
+      credentials: "include",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${authToken}`,
+      },
+      body: JSON.stringify({ quantity: parseInt(quantity), date }),
+    });
 
-        const data = await response.json();
+    const data = await response.json();
 
-        if (response.ok && data.success) {
-            showToast('✅ Order updated successfully', 'success');
-            closeModal();
-            loadOrders();
-            loadStats();
-        } else {
-            showToast('❌ ' + (data.error || 'Failed to update order'), 'error');
-        }
-    } catch (error) {
-        console.error('Error updating order:', error);
-        showToast('❌ Network error. Please try again.', 'error');
-    } finally {
-        submitBtn.disabled = false;
-        submitBtn.textContent = 'Save Changes';
+    if (response.ok && data.success) {
+      showToast("✅ Order updated successfully", "success");
+      closeModal();
+      loadOrders();
+      loadStats();
+    } else {
+      showToast("❌ " + (data.error || "Failed to update order"), "error");
     }
+  } catch (error) {
+    console.error("Error updating order:", error);
+    showToast("❌ Network error. Please try again.", "error");
+  } finally {
+    submitBtn.disabled = false;
+    submitBtn.textContent = "Save Changes";
+  }
 }
 
 // Delete order
 async function deleteOrder(orderId) {
-    if (!confirm('⚠️ Are you sure you want to delete this order?\n\nThis action cannot be undone.')) {
-        return;
+  if (
+    !confirm(
+      "⚠️ Are you sure you want to delete this order?\n\nThis action cannot be undone."
+    )
+  ) {
+    return;
+  }
+
+  try {
+    const authToken = localStorage.getItem("adminAuthToken");
+    const response = await fetch(`${API_URL}/api/admin/orders/${orderId}`, {
+      method: "DELETE",
+      credentials: "include",
+      headers: {
+        Authorization: `Bearer ${authToken}`,
+      },
+    });
+
+    const data = await response.json();
+
+    if (response.ok && data.success) {
+      showToast("✅ Order deleted successfully", "success");
+      loadOrders();
+      loadStats();
+    } else {
+      showToast("❌ " + (data.error || "Failed to delete order"), "error");
     }
-
-    try {
-        const authToken = localStorage.getItem('adminAuthToken');
-        const response = await fetch(`${API_URL}/api/admin/orders/${orderId}`, {
-            method: 'DELETE',
-            credentials: 'include',
-            headers: {
-                'Authorization': `Bearer ${authToken}`
-            }
-        });
-
-        const data = await response.json();
-
-        if (response.ok && data.success) {
-            showToast('✅ Order deleted successfully', 'success');
-            loadOrders();
-            loadStats();
-        } else {
-            showToast('❌ ' + (data.error || 'Failed to delete order'), 'error');
-        }
-    } catch (error) {
-        console.error('Error deleting order:', error);
-        showToast('❌ Network error. Please try again.', 'error');
-    }
+  } catch (error) {
+    console.error("Error deleting order:", error);
+    showToast("❌ Network error. Please try again.", "error");
+  }
 }
 
 // Toast notification
-function showToast(message, type = 'success') {
-    // Remove existing toast
-    const existingToast = document.querySelector('.toast');
-    if (existingToast) {
-        existingToast.remove();
-    }
+function showToast(message, type = "success") {
+  // Remove existing toast
+  const existingToast = document.querySelector(".toast");
+  if (existingToast) {
+    existingToast.remove();
+  }
 
-    // Create toast
-    const toast = document.createElement('div');
-    toast.className = `toast toast-${type}`;
-    toast.textContent = message;
-    document.body.appendChild(toast);
+  // Create toast
+  const toast = document.createElement("div");
+  toast.className = `toast toast-${type}`;
+  toast.textContent = message;
+  document.body.appendChild(toast);
 
-    // Show toast
-    setTimeout(() => toast.classList.add('show'), 100);
+  // Show toast
+  setTimeout(() => toast.classList.add("show"), 100);
 
-    // Remove toast after 3 seconds
-    setTimeout(() => {
-        toast.classList.remove('show');
-        setTimeout(() => toast.remove(), 300);
-    }, 3000);
+  // Remove toast after 3 seconds
+  setTimeout(() => {
+    toast.classList.remove("show");
+    setTimeout(() => toast.remove(), 300);
+  }, 3000);
 }
 
 // Modal functions
 function openModal() {
-    document.getElementById('editModal').classList.add('active');
+  document.getElementById("editModal").classList.add("active");
 }
 
 function closeModal() {
-    document.getElementById('editModal').classList.remove('active');
+  document.getElementById("editModal").classList.remove("active");
 }
 
 // Notice Management Functions
 async function loadNotice() {
-    try {
-        const response = await fetch(`${API_URL}/api/notice`);
-        const data = await response.json();
-        
-        if (data.notice) {
-            document.getElementById('noticeContent').value = data.notice;
-        }
-    } catch (error) {
-        console.error('Error loading notice:', error);
+  try {
+    const response = await fetch(`${API_URL}/api/notice`);
+    const data = await response.json();
+
+    if (data.notice) {
+      document.getElementById("noticeContent").value = data.notice;
     }
+  } catch (error) {
+    console.error("Error loading notice:", error);
+  }
 }
 
 async function updateNotice() {
-    const content = document.getElementById('noticeContent').value.trim();
-    const authToken = localStorage.getItem('adminAuthToken');
-    
-    if (!authToken) {
-        showToast('❌ Authentication error. Please login again.', 'error');
-        return;
+  const content = document.getElementById("noticeContent").value.trim();
+  const authToken = localStorage.getItem("adminAuthToken");
+
+  if (!authToken) {
+    showToast("❌ Authentication error. Please login again.", "error");
+    return;
+  }
+
+  try {
+    const response = await fetch(`${API_URL}/api/admin/notice`, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${authToken}`,
+      },
+      body: JSON.stringify({ content }),
+    });
+
+    const data = await response.json();
+
+    if (response.ok && data.success) {
+      showToast("✅ Notice updated successfully!", "success");
+    } else {
+      console.error("Notice update failed:", data);
+      let errorMsg = data.error || "Failed to update notice";
+      if (data.hint) {
+        errorMsg += ". " + data.hint;
+      }
+      if (data.details) {
+        console.error("Error details:", data.details);
+      }
+      showToast("❌ " + errorMsg, "error");
     }
-
-    try {
-        const response = await fetch(`${API_URL}/api/admin/notice`, {
-            method: 'PUT',
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${authToken}`
-            },
-            body: JSON.stringify({ content })
-        });
-
-        const data = await response.json();
-
-        if (response.ok && data.success) {
-            showToast('✅ Notice updated successfully!', 'success');
-        } else {
-            console.error('Notice update failed:', data);
-            let errorMsg = data.error || 'Failed to update notice';
-            if (data.hint) {
-                errorMsg += '. ' + data.hint;
-            }
-            if (data.details) {
-                console.error('Error details:', data.details);
-            }
-            showToast('❌ ' + errorMsg, 'error');
-        }
-    } catch (error) {
-        console.error('Error updating notice:', error);
-        showToast('❌ Network error. Please try again.', 'error');
-    }
+  } catch (error) {
+    console.error("Error updating notice:", error);
+    showToast("❌ Network error. Please try again.", "error");
+  }
 }
 
 // Export Orders Function
 async function exportOrders() {
-    const authToken = localStorage.getItem('adminAuthToken');
-    
-    if (!authToken) {
-        showToast('❌ Authentication error. Please login again.', 'error');
-        return;
+  const authToken = localStorage.getItem("adminAuthToken");
+
+  if (!authToken) {
+    showToast("❌ Authentication error. Please login again.", "error");
+    return;
+  }
+
+  try {
+    showToast("📥 Generating CSV file...", "success");
+
+    const response = await fetch(`${API_URL}/api/admin/export`, {
+      headers: {
+        Authorization: `Bearer ${authToken}`,
+      },
+    });
+
+    if (!response.ok) {
+      throw new Error("Export failed");
     }
 
-    try {
-        showToast('📥 Generating CSV file...', 'success');
-        
-        const response = await fetch(`${API_URL}/api/admin/export`, {
-            headers: {
-                'Authorization': `Bearer ${authToken}`
-            }
-        });
+    // Create a blob from the response
+    const blob = await response.blob();
 
-        if (!response.ok) {
-            throw new Error('Export failed');
-        }
+    // Create a download link
+    const url = window.URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `orders-${new Date().toISOString().split("T")[0]}.csv`;
+    document.body.appendChild(a);
+    a.click();
+    window.URL.revokeObjectURL(url);
+    document.body.removeChild(a);
 
-        // Create a blob from the response
-        const blob = await response.blob();
-        
-        // Create a download link
-        const url = window.URL.createObjectURL(blob);
-        const a = document.createElement('a');
-        a.href = url;
-        a.download = `orders-${new Date().toISOString().split('T')[0]}.csv`;
-        document.body.appendChild(a);
-        a.click();
-        window.URL.revokeObjectURL(url);
-        document.body.removeChild(a);
-        
-        showToast('✅ Orders exported successfully!', 'success');
-    } catch (error) {
-        console.error('Error exporting orders:', error);
-        showToast('❌ Failed to export orders. Please try again.', 'error');
-    }
+    showToast("✅ Orders exported successfully!", "success");
+  } catch (error) {
+    console.error("Error exporting orders:", error);
+    showToast("❌ Failed to export orders. Please try again.", "error");
+  }
 }

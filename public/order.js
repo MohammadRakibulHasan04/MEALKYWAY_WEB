@@ -143,12 +143,16 @@ document.addEventListener("DOMContentLoaded", () => {
       dates = Array.from(selectedDates).sort();
     } else {
       // Preset durations (3, 7, 10, 30 days)
-      const startDate = new Date(startDateInput.value);
+      const [year, month, day] = startDateInput.value.split("-").map(Number);
+      const startDate = new Date(year, month - 1, day);
       const days = parseInt(currentDurationType);
       for (let i = 0; i < days; i++) {
         const date = new Date(startDate);
         date.setDate(date.getDate() + i);
-        dates.push(date.toISOString().split("T")[0]);
+        const y = date.getFullYear();
+        const m = String(date.getMonth() + 1).padStart(2, "0");
+        const d = String(date.getDate()).padStart(2, "0");
+        dates.push(`${y}-${m}-${d}`);
       }
     }
 
@@ -295,11 +299,34 @@ function initializeCustomDatePicker() {
   const overlay = document.getElementById("datePickerOverlay");
   const doneBtn = document.getElementById("datePickerDone");
   const clearBtn = document.getElementById("datePickerClear");
+  const prevMonthBtn = document.getElementById("prevMonthBtn");
+  const nextMonthBtn = document.getElementById("nextMonthBtn");
+  const monthYearDisplay = document.getElementById("currentMonthYear");
+
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+
+  let currentDisplayMonth = new Date(today.getFullYear(), today.getMonth(), 1);
+  const monthNames = [
+    "জানুয়ারি",
+    "ফেব্রুয়ারি",
+    "মার্চ",
+    "এপ্রিল",
+    "মে",
+    "জুন",
+    "জুলাই",
+    "আগস্ট",
+    "সেপ্টেম্বর",
+    "অক্টোবর",
+    "নভেম্বর",
+    "ডিসেম্বর",
+  ];
 
   // Open modal
   trigger.addEventListener("click", () => {
     modal.classList.add("active");
     document.body.style.overflow = "hidden";
+    renderCalendar();
   });
 
   // Close modal functions
@@ -318,80 +345,154 @@ function initializeCustomDatePicker() {
 
   clearBtn.addEventListener("click", () => {
     selectedDates.clear();
-    document.querySelectorAll(".date-cell.selected").forEach((cell) => {
-      cell.classList.remove("selected");
-    });
+    renderCalendar();
     updateOrderSummary();
   });
 
-  const today = new Date();
-  today.setHours(0, 0, 0, 0);
-
-  // Create calendar for next 60 days
-  const daysToShow = 60;
-
-  // Add day headers
-  const dayHeaders = ["রবি", "সোম", "মঙ্গল", "বুধ", "বৃহ", "শুক্র", "শনি"];
-  dayHeaders.forEach((day) => {
-    const header = document.createElement("div");
-    header.className = "date-cell header";
-    header.textContent = day;
-    pickerContainer.appendChild(header);
+  // Month navigation
+  prevMonthBtn.addEventListener("click", () => {
+    currentDisplayMonth.setMonth(currentDisplayMonth.getMonth() - 1);
+    renderCalendar();
   });
 
-  // Calculate starting day offset
-  const firstDate = new Date(today);
-  const startDayOfWeek = firstDate.getDay();
+  nextMonthBtn.addEventListener("click", () => {
+    currentDisplayMonth.setMonth(currentDisplayMonth.getMonth() + 1);
+    renderCalendar();
+  });
 
-  // Add empty cells for offset
-  for (let i = 0; i < startDayOfWeek; i++) {
-    const emptyCell = document.createElement("div");
-    emptyCell.className = "date-cell disabled";
-    pickerContainer.appendChild(emptyCell);
-  }
+  function renderCalendar() {
+    pickerContainer.innerHTML = "";
 
-  // Add date cells
-  for (let i = 0; i < daysToShow; i++) {
-    const date = new Date(today);
-    date.setDate(date.getDate() + i);
-    const dateString = date.toISOString().split("T")[0];
+    // Update month/year display
+    const monthName = monthNames[currentDisplayMonth.getMonth()];
+    const year = currentDisplayMonth.getFullYear();
+    monthYearDisplay.textContent = `${monthName} ${year}`;
 
-    const cell = document.createElement("div");
-    cell.className = "date-cell";
-    cell.textContent = date.getDate();
-    cell.dataset.date = dateString;
+    // Enable/disable navigation buttons
+    const firstAllowedMonth = new Date(
+      today.getFullYear(),
+      today.getMonth(),
+      1
+    );
+    const maxMonth = new Date(today.getFullYear(), today.getMonth() + 3, 1); // Allow 3 months ahead
 
-    if (i === 0) {
-      cell.classList.add("today");
-    }
+    prevMonthBtn.disabled = currentDisplayMonth <= firstAllowedMonth;
+    nextMonthBtn.disabled = currentDisplayMonth >= maxMonth;
 
-    cell.addEventListener("click", () => {
-      if (selectedDates.has(dateString)) {
-        selectedDates.delete(dateString);
-        cell.classList.remove("selected");
-      } else {
-        selectedDates.add(dateString);
-        cell.classList.add("selected");
-      }
-      updateOrderSummary();
+    // Add day headers
+    const dayHeaders = ["রবি", "সোম", "মঙ্গল", "বুধ", "বৃহ", "শুক্র", "শনি"];
+    dayHeaders.forEach((day) => {
+      const header = document.createElement("div");
+      header.className = "date-cell header";
+      header.textContent = day;
+      pickerContainer.appendChild(header);
     });
 
-    pickerContainer.appendChild(cell);
+    // Get first day of month and total days
+    const firstDayOfMonth = new Date(
+      currentDisplayMonth.getFullYear(),
+      currentDisplayMonth.getMonth(),
+      1
+    );
+    const lastDayOfMonth = new Date(
+      currentDisplayMonth.getFullYear(),
+      currentDisplayMonth.getMonth() + 1,
+      0
+    );
+    const startDayOfWeek = firstDayOfMonth.getDay();
+    const totalDays = lastDayOfMonth.getDate();
+
+    // Add empty cells for offset
+    for (let i = 0; i < startDayOfWeek; i++) {
+      const emptyCell = document.createElement("div");
+      emptyCell.className = "date-cell disabled";
+      pickerContainer.appendChild(emptyCell);
+    }
+
+    // Add date cells
+    for (let day = 1; day <= totalDays; day++) {
+      const date = new Date(
+        currentDisplayMonth.getFullYear(),
+        currentDisplayMonth.getMonth(),
+        day
+      );
+      // Create date string in local timezone to avoid UTC conversion issues
+      const year = date.getFullYear();
+      const month = String(date.getMonth() + 1).padStart(2, "0");
+      const dayStr = String(date.getDate()).padStart(2, "0");
+      const dateString = `${year}-${month}-${dayStr}`;
+      const isPast = date < today;
+
+      const cell = document.createElement("div");
+      cell.className = "date-cell";
+      cell.textContent = day;
+      cell.dataset.date = dateString;
+
+      if (isPast) {
+        cell.classList.add("disabled");
+      } else {
+        // Check if date is selected
+        if (selectedDates.has(dateString)) {
+          cell.classList.add("selected");
+        }
+
+        // Mark today
+        if (date.getTime() === today.getTime()) {
+          cell.classList.add("today");
+        }
+
+        // Add click handler for future dates
+        cell.addEventListener("click", () => {
+          if (selectedDates.has(dateString)) {
+            selectedDates.delete(dateString);
+            cell.classList.remove("selected");
+          } else {
+            selectedDates.add(dateString);
+            cell.classList.add("selected");
+          }
+          updateOrderSummary();
+        });
+      }
+
+      pickerContainer.appendChild(cell);
+    }
   }
+
+  // Initial render
+  renderCalendar();
 }
 
 // Update order summary display
 function updateOrderSummary() {
   const quantity = parseInt(document.getElementById("quantity").value) || 1;
   let totalDays = 1;
+  let deliveryDates = [];
 
   if (currentDurationType === "single") {
     totalDays = 1;
+    const singleDate = document.getElementById("date").value;
+    if (singleDate) {
+      deliveryDates = [singleDate];
+    }
   } else if (currentDurationType === "custom") {
     totalDays = selectedDates.size;
     document.getElementById("selectedDatesCount").textContent = totalDays;
+    deliveryDates = Array.from(selectedDates).sort();
   } else {
     totalDays = parseInt(currentDurationType);
+    const startDate = document.getElementById("startDate").value;
+    if (startDate) {
+      const [year, month, day] = startDate.split("-").map(Number);
+      const start = new Date(year, month - 1, day);
+      for (let i = 0; i < totalDays; i++) {
+        const date = new Date(start);
+        date.setDate(date.getDate() + i);
+        const y = date.getFullYear();
+        const m = String(date.getMonth() + 1).padStart(2, "0");
+        const d = String(date.getDate()).padStart(2, "0");
+        deliveryDates.push(`${y}-${m}-${d}`);
+      }
+    }
   }
 
   const totalPrice = quantity * totalDays * 30;
@@ -399,6 +500,30 @@ function updateOrderSummary() {
   document.getElementById("summaryQuantity").textContent = `${quantity} পিস`;
   document.getElementById("summaryDays").textContent = `${totalDays} দিন`;
   document.getElementById("totalPrice").textContent = `${totalPrice} টাকা`;
+
+  // Update delivery dates display
+  const deliveryDatesRow = document.getElementById("deliveryDatesRow");
+  const deliveryDatesList = document.getElementById("deliveryDatesList");
+
+  if (deliveryDates.length > 0) {
+    deliveryDatesList.innerHTML = "";
+    deliveryDates.forEach((dateStr) => {
+      // Parse date string as local date to avoid timezone shift
+      const [year, month, day] = dateStr.split("-").map(Number);
+      const date = new Date(year, month - 1, day);
+      const formattedDate = date.toLocaleDateString("bn-BD", {
+        day: "numeric",
+        month: "short",
+      });
+      const badge = document.createElement("span");
+      badge.className = "delivery-date-badge";
+      badge.textContent = formattedDate;
+      deliveryDatesList.appendChild(badge);
+    });
+    deliveryDatesRow.style.display = "flex";
+  } else {
+    deliveryDatesRow.style.display = "none";
+  }
 }
 
 async function fetchNotice() {
@@ -407,8 +532,19 @@ async function fetchNotice() {
     const data = await response.json();
 
     if (data.notice && data.notice.trim() !== "") {
-      document.getElementById("noticeBannerText").textContent = data.notice;
-      document.getElementById("noticeBanner").style.display = "block";
+      const noticeBanner = document.getElementById("noticeBanner");
+      const noticeBannerText = document.getElementById("noticeBannerText");
+      const noticeBannerClose = document.getElementById("noticeBannerClose");
+
+      noticeBannerText.textContent = data.notice;
+      noticeBanner.style.display = "block";
+
+      // Add close button functionality
+      if (noticeBannerClose) {
+        noticeBannerClose.addEventListener("click", () => {
+          noticeBanner.style.display = "none";
+        });
+      }
     }
   } catch (error) {
     console.error("Error fetching notice:", error);

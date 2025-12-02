@@ -1,800 +1,892 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
-    <meta http-equiv="Pragma" content="no-cache">
-    <meta http-equiv="Expires" content="0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      http-equiv="Cache-Control"
+      content="no-cache, no-store, must-revalidate"
+    />
+    <meta http-equiv="Pragma" content="no-cache" />
+    <meta http-equiv="Expires" content="0" />
     <title>Admin Panel - Mealky Way</title>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+    <link
+      href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap"
+      rel="stylesheet"
+    />
     <style>
-        :root {
-            --primary-blue: #0057A3;
-            --bright-yellow: #F4C430;
-            --white: #FFFFFF;
-            --light-blue: #E6F2FF;
-            --dark-blue: #003D73;
-            --text-dark: #1a1a1a;
-            --text-gray: #666666;
-            --success-green: #28a745;
-            --error-red: #dc3545;
-            --border-color: #e0e0e0;
-        }
-        
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        
-        body {
-            font-family: 'Poppins', sans-serif;
-            background: linear-gradient(135deg, #e8f4f8 0%, #f8f9fa 100%);
-            color: var(--text-dark);
-            line-height: 1.6;
-            min-height: 100vh;
-        }
-        
-        .container { max-width: 1200px; margin: 0 auto; padding: 0 20px; }
-        .container-fluid { max-width: 100%; padding: 0 20px; }
-        
-        /* Navbar */
-        .navbar {
-            background: var(--white);
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-            position: sticky;
-            top: 0;
-            z-index: 1000;
-            padding: 15px 0;
-        }
-        
-        .nav-content {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-        
-        .logo h1 {
-            color: var(--primary-blue);
-            font-size: 28px;
-            font-weight: 700;
-            font-style: italic;
-        }
-        
-        .admin-nav {
-            display: flex;
-            align-items: center;
-            gap: 20px;
-        }
-        
-        .admin-username {
-            color: var(--primary-blue);
-            font-weight: 600;
-        }
-        
-        .logout-btn {
-            background: var(--error-red);
-            color: var(--white);
-            border: none;
-            padding: 8px 20px;
-            border-radius: 5px;
-            cursor: pointer;
-            font-weight: 500;
-            transition: all 0.3s;
-        }
-        
-        .logout-btn:hover {
-            background: #c82333;
-            transform: translateY(-2px);
-        }
-        
-        /* Admin Panel */
-        .admin-panel-section {
-            padding: 40px 0;
-            min-height: calc(100vh - 150px);
-        }
-        
-        /* Stats Grid */
-        .stats-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 25px;
-            margin-bottom: 40px;
-        }
-        
-        .stat-card {
-            background: linear-gradient(135deg, var(--white) 0%, #fafbfc 100%);
-            padding: 30px;
-            border-radius: 20px;
-            display: flex;
-            align-items: center;
-            gap: 20px;
-            box-shadow: 0 4px 20px rgba(0, 87, 163, 0.1);
-            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-            border: 1px solid rgba(0, 87, 163, 0.1);
-            position: relative;
-            overflow: hidden;
-        }
-        
-        .stat-card::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 4px;
-            background: linear-gradient(90deg, var(--primary-blue), var(--bright-yellow));
-        }
-        
-        .stat-card:hover {
-            transform: translateY(-8px);
-            box-shadow: 0 12px 40px rgba(0, 87, 163, 0.2);
-            border-color: var(--primary-blue);
-        }
-        
-        .stat-icon {
-            font-size: 42px;
-            width: 80px;
-            height: 80px;
-            background: linear-gradient(135deg, var(--primary-blue) 0%, #0073d1 100%);
-            border-radius: 20px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            box-shadow: 0 8px 20px rgba(0, 87, 163, 0.3);
-            transition: all 0.3s;
-        }
-        
-        .stat-card:hover .stat-icon {
-            transform: scale(1.1) rotate(5deg);
-        }
-        
-        .stat-info h3 {
-            font-size: 36px;
-            background: linear-gradient(135deg, var(--primary-blue), #0073d1);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-            margin-bottom: 5px;
-            font-weight: 700;
-        }
-        
-        .stat-info p {
-            color: var(--text-gray);
-            font-size: 14px;
-            font-weight: 500;
-        }
-        
-        /* Filters */
-        .filters-section { margin-bottom: 30px; }
-        
-        .filters-card {
-            background: linear-gradient(135deg, var(--white) 0%, #fafbfc 100%);
-            padding: 35px;
-            border-radius: 20px;
-            box-shadow: 0 4px 20px rgba(0, 87, 163, 0.1);
-            border: 1px solid rgba(0, 87, 163, 0.1);
-        }
-        
-        .filters-card h3 {
-            color: var(--primary-blue);
-            margin-bottom: 25px;
-            font-size: 24px;
-            font-weight: 700;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-        
-        .filters-card h3::before {
-            content: '🔍';
-            font-size: 28px;
-        }
-        
-        .filters-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 20px;
-            align-items: end;
-        }
-        
-        .filter-group {
-            display: flex;
-            flex-direction: column;
-        }
-        
-        .filter-group label {
-            margin-bottom: 8px;
-            color: var(--text-dark);
-            font-weight: 600;
-            font-size: 14px;
-        }
-        
-        .filter-group input,
-        .filter-group select {
-            padding: 10px;
-            border: 2px solid var(--border-color);
-            border-radius: 8px;
-            font-size: 14px;
-            transition: all 0.3s;
-        }
-        
-        .filter-group input:focus,
-        .filter-group select:focus {
-            outline: none;
-            border-color: var(--primary-blue);
-        }
-        
-        .filter-actions {
-            display: flex;
-            gap: 10px;
-            flex-wrap: wrap;
-        }
-        
-        /* Buttons */
-        .btn {
-            padding: 10px 20px;
-            border-radius: 10px;
-            font-weight: 600;
-            transition: all 0.3s;
-            border: none;
-            cursor: pointer;
-            font-size: 14px;
-        }
-        
-        .btn-primary {
-            background: linear-gradient(135deg, var(--bright-yellow) 0%, #ffd700 100%);
-            color: var(--text-dark);
-            box-shadow: 0 4px 15px rgba(244, 196, 48, 0.3);
-        }
-        
-        .btn-primary:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 6px 20px rgba(244, 196, 48, 0.5);
-        }
-        
-        .btn-secondary {
-            background: linear-gradient(135deg, var(--primary-blue) 0%, #0073d1 100%);
-            color: var(--white);
-            box-shadow: 0 4px 15px rgba(0, 87, 163, 0.3);
-        }
-        
-        .btn-secondary:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 6px 20px rgba(0, 87, 163, 0.5);
-        }
-        
-        .btn-print {
-            background: var(--success-green);
-            color: var(--white);
-        }
-        
-        .btn-print:hover {
-            background: #218838;
-        }
-        
-        /* Orders */
-        .orders-section { margin-bottom: 40px; }
-        
-        .orders-card {
-            background: linear-gradient(135deg, var(--white) 0%, #fafbfc 100%);
-            border-radius: 20px;
-            box-shadow: 0 4px 20px rgba(0, 87, 163, 0.1);
-            overflow: hidden;
-            border: 1px solid rgba(0, 87, 163, 0.1);
-        }
-        
-        .orders-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 25px 30px;
-            background: linear-gradient(135deg, var(--light-blue) 0%, #e0f2fe 100%);
-            border-bottom: 3px solid var(--primary-blue);
-        }
-        
-        .orders-header h3 {
-            color: var(--primary-blue);
-            font-size: 24px;
-            font-weight: 700;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-        
-        .orders-header h3::before {
-            content: '📋';
-            font-size: 28px;
-        }
-        
-        .orders-count {
-            background: var(--white);
-            padding: 8px 20px;
-            border-radius: 25px;
-            font-weight: 600;
-            box-shadow: 0 2px 10px rgba(0, 87, 163, 0.1);
-            color: var(--text-gray);
-        }
-        
-        .orders-count span {
-            color: var(--primary-blue);
-            font-size: 20px;
-            font-weight: 700;
-        }
-        
-        .table-responsive {
-            overflow-x: auto;
-        }
-        
-        .orders-table {
-            width: 100%;
-            border-collapse: collapse;
-        }
-        
-        .orders-table thead {
-            background: linear-gradient(135deg, var(--primary-blue) 0%, #0073d1 100%);
-        }
-        
-        .orders-table th {
-            padding: 18px 15px;
-            text-align: left;
-            font-weight: 700;
-            color: var(--white);
-            text-transform: uppercase;
-            font-size: 13px;
-            letter-spacing: 0.5px;
-        }
-        
-        .orders-table td {
-            padding: 18px 15px;
-            border-bottom: 1px solid var(--border-color);
-            font-size: 14px;
-            font-weight: 500;
-        }
-        
-        .orders-table tbody tr {
-            transition: all 0.3s ease;
-        }
-        
-        .orders-table tbody tr:hover {
-            background: linear-gradient(135deg, var(--light-blue) 0%, #e0f2fe 100%);
-            transform: scale(1.01);
-            box-shadow: 0 2px 8px rgba(0, 87, 163, 0.1);
-        }
-        
-        .no-data {
-            text-align: center;
-            color: var(--text-gray);
-        }
-        
-        .action-btns {
-            display: flex;
-            gap: 8px;
-        }
-        
-        .btn-edit,
-        .btn-delete {
-            padding: 8px 16px;
-            border: none;
-            border-radius: 8px;
-            cursor: pointer;
-            font-size: 13px;
-            font-weight: 600;
-            transition: all 0.3s;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
-        }
-        
-        .btn-edit {
-            background: linear-gradient(135deg, var(--primary-blue) 0%, #0073d1 100%);
-            color: var(--white);
-        }
-        
-        .btn-edit:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(0, 87, 163, 0.3);
-        }
-        
-        .btn-delete {
-            background: linear-gradient(135deg, var(--error-red) 0%, #e74c3c 100%);
-            color: var(--white);
-        }
-        
-        .btn-delete:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(220, 53, 69, 0.3);
-        }
-        
-        /* Modal */
-        .modal {
-            display: none;
-            position: fixed;
-            z-index: 2000;
-            left: 0;
-            top: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.6);
-            align-items: center;
-            justify-content: center;
-        }
-        
-        .modal.active {
-            display: flex;
-        }
-        
-        .modal-content {
-            background: var(--white);
-            border-radius: 15px;
-            width: 90%;
-            max-width: 500px;
-            max-height: 90vh;
-            overflow-y: auto;
-            animation: modalSlideIn 0.3s ease-out;
-        }
-        
-        @keyframes modalSlideIn {
-            from {
-                transform: translateY(-50px);
-                opacity: 0;
-            }
-            to {
-                transform: translateY(0);
-                opacity: 1;
-            }
-        }
-        
-        @keyframes fadeInUp {
-            from {
-                opacity: 0;
-                transform: translateY(20px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-        
-        @keyframes pulse {
-            0%, 100% {
-                opacity: 1;
-                transform: scale(1);
-            }
-            50% {
-                opacity: 0.5;
-                transform: scale(1.1);
-            }
-        }
-        
-        .modal-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 25px 30px;
-            border-bottom: 2px solid var(--border-color);
-        }
-        
-        .modal-header h2 {
-            color: var(--primary-blue);
-            font-size: 24px;
-        }
-        
-        .close-modal {
-            font-size: 30px;
-            cursor: pointer;
-            color: var(--text-gray);
-            transition: color 0.3s;
-            background: none;
-            border: none;
-        }
-        
-        .close-modal:hover {
-            color: var(--error-red);
-        }
-        
-        .modal-form {
-            padding: 30px;
-        }
-        
-        .modal-form .form-group {
-            margin-bottom: 20px;
-        }
-        
-        .modal-form label {
-            display: block;
-            margin-bottom: 8px;
-            color: var(--text-dark);
-            font-weight: 600;
-        }
-        
-        .modal-form input,
-        .modal-form select {
-            width: 100%;
-            padding: 12px;
-            border: 2px solid var(--border-color);
-            border-radius: 8px;
-            font-size: 14px;
-        }
-        
-        .modal-form input[readonly] {
-            background: #f5f5f5;
-            cursor: not-allowed;
-        }
-        
-        .modal-actions {
-            display: flex;
-            gap: 10px;
-            margin-top: 30px;
-        }
-        
-        .modal-actions .btn {
-            flex: 1;
-        }
-        
-        /* Toast */
-        .toast {
-            position: fixed;
-            bottom: 30px;
-            right: 30px;
-            padding: 18px 30px;
-            border-radius: 12px;
-            font-weight: 600;
-            font-size: 15px;
-            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.3);
-            z-index: 10000;
-            opacity: 0;
-            transform: translateY(100px);
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-        
-        .toast.show {
-            opacity: 1;
-            transform: translateY(0);
-        }
-        
-        .toast-success {
-            background: linear-gradient(135deg, var(--success-green) 0%, #27ae60 100%);
-            color: var(--white);
-        }
-        
-        .toast-error {
-            background: linear-gradient(135deg, var(--error-red) 0%, #e74c3c 100%);
-            color: var(--white);
-        }
-        
-        /* Footer */
-        .footer {
-            background: var(--dark-blue);
-            color: var(--white);
-            padding: 20px 0;
-            text-align: center;
-        }
-        
-        .footer-bottom {
-            color: rgba(255, 255, 255, 0.7);
-        }
-        
-        @media print {
-            .navbar, .filters-section, .footer, .no-print { display: none !important; }
-        }
+      :root {
+        --primary-blue: #0057a3;
+        --bright-yellow: #f4c430;
+        --white: #ffffff;
+        --light-blue: #e6f2ff;
+        --dark-blue: #003d73;
+        --text-dark: #1a1a1a;
+        --text-gray: #666666;
+        --success-green: #28a745;
+        --error-red: #dc3545;
+        --border-color: #e0e0e0;
+      }
+
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family: "Poppins", sans-serif;
+        background: linear-gradient(135deg, #e8f4f8 0%, #f8f9fa 100%);
+        color: var(--text-dark);
+        line-height: 1.6;
+        min-height: 100vh;
+      }
+
+      .container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 0 20px;
+      }
+      .container-fluid {
+        max-width: 100%;
+        padding: 0 20px;
+      }
+
+      /* Navbar */
+      .navbar {
+        background: var(--white);
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        position: sticky;
+        top: 0;
+        z-index: 1000;
+        padding: 15px 0;
+      }
+
+      .nav-content {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+
+      .logo h1 {
+        color: var(--primary-blue);
+        font-size: 28px;
+        font-weight: 700;
+        font-style: italic;
+      }
+
+      .admin-nav {
+        display: flex;
+        align-items: center;
+        gap: 20px;
+      }
+
+      .admin-username {
+        color: var(--primary-blue);
+        font-weight: 600;
+      }
+
+      .logout-btn {
+        background: var(--error-red);
+        color: var(--white);
+        border: none;
+        padding: 8px 20px;
+        border-radius: 5px;
+        cursor: pointer;
+        font-weight: 500;
+        transition: all 0.3s;
+      }
+
+      .logout-btn:hover {
+        background: #c82333;
+        transform: translateY(-2px);
+      }
+
+      /* Admin Panel */
+      .admin-panel-section {
+        padding: 40px 0;
+        min-height: calc(100vh - 150px);
+      }
+
+      /* Stats Grid */
+      .stats-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 25px;
+        margin-bottom: 40px;
+      }
+
+      .stat-card {
+        background: linear-gradient(135deg, var(--white) 0%, #fafbfc 100%);
+        padding: 30px;
+        border-radius: 20px;
+        display: flex;
+        align-items: center;
+        gap: 20px;
+        box-shadow: 0 4px 20px rgba(0, 87, 163, 0.1);
+        transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        border: 1px solid rgba(0, 87, 163, 0.1);
+        position: relative;
+        overflow: hidden;
+      }
+
+      .stat-card::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 4px;
+        background: linear-gradient(
+          90deg,
+          var(--primary-blue),
+          var(--bright-yellow)
+        );
+      }
+
+      .stat-card:hover {
+        transform: translateY(-8px);
+        box-shadow: 0 12px 40px rgba(0, 87, 163, 0.2);
+        border-color: var(--primary-blue);
+      }
+
+      .stat-icon {
+        font-size: 42px;
+        width: 80px;
+        height: 80px;
+        background: linear-gradient(
+          135deg,
+          var(--primary-blue) 0%,
+          #0073d1 100%
+        );
+        border-radius: 20px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        box-shadow: 0 8px 20px rgba(0, 87, 163, 0.3);
+        transition: all 0.3s;
+      }
+
+      .stat-card:hover .stat-icon {
+        transform: scale(1.1) rotate(5deg);
+      }
+
+      .stat-info h3 {
+        font-size: 36px;
+        background: linear-gradient(135deg, var(--primary-blue), #0073d1);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        margin-bottom: 5px;
+        font-weight: 700;
+      }
+
+      .stat-info p {
+        color: var(--text-gray);
+        font-size: 14px;
+        font-weight: 500;
+      }
+
+      /* Filters */
+      .filters-section {
+        margin-bottom: 30px;
+      }
+
+      .filters-card {
+        background: linear-gradient(135deg, var(--white) 0%, #fafbfc 100%);
+        padding: 35px;
+        border-radius: 20px;
+        box-shadow: 0 4px 20px rgba(0, 87, 163, 0.1);
+        border: 1px solid rgba(0, 87, 163, 0.1);
+      }
+
+      .filters-card h3 {
+        color: var(--primary-blue);
+        margin-bottom: 25px;
+        font-size: 24px;
+        font-weight: 700;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+
+      .filters-card h3::before {
+        content: "🔍";
+        font-size: 28px;
+      }
+
+      .filters-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 20px;
+        align-items: end;
+      }
+
+      .filter-group {
+        display: flex;
+        flex-direction: column;
+      }
+
+      .filter-group label {
+        margin-bottom: 8px;
+        color: var(--text-dark);
+        font-weight: 600;
+        font-size: 14px;
+      }
+
+      .filter-group input,
+      .filter-group select {
+        padding: 10px;
+        border: 2px solid var(--border-color);
+        border-radius: 8px;
+        font-size: 14px;
+        transition: all 0.3s;
+      }
+
+      .filter-group input:focus,
+      .filter-group select:focus {
+        outline: none;
+        border-color: var(--primary-blue);
+      }
+
+      .filter-actions {
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
+      }
+
+      /* Buttons */
+      .btn {
+        padding: 10px 20px;
+        border-radius: 10px;
+        font-weight: 600;
+        transition: all 0.3s;
+        border: none;
+        cursor: pointer;
+        font-size: 14px;
+      }
+
+      .btn-primary {
+        background: linear-gradient(
+          135deg,
+          var(--bright-yellow) 0%,
+          #ffd700 100%
+        );
+        color: var(--text-dark);
+        box-shadow: 0 4px 15px rgba(244, 196, 48, 0.3);
+      }
+
+      .btn-primary:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 6px 20px rgba(244, 196, 48, 0.5);
+      }
+
+      .btn-secondary {
+        background: linear-gradient(
+          135deg,
+          var(--primary-blue) 0%,
+          #0073d1 100%
+        );
+        color: var(--white);
+        box-shadow: 0 4px 15px rgba(0, 87, 163, 0.3);
+      }
+
+      .btn-secondary:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 6px 20px rgba(0, 87, 163, 0.5);
+      }
+
+      .btn-print {
+        background: var(--success-green);
+        color: var(--white);
+      }
+
+      .btn-print:hover {
+        background: #218838;
+      }
+
+      /* Orders */
+      .orders-section {
+        margin-bottom: 40px;
+      }
+
+      .orders-card {
+        background: linear-gradient(135deg, var(--white) 0%, #fafbfc 100%);
+        border-radius: 20px;
+        box-shadow: 0 4px 20px rgba(0, 87, 163, 0.1);
+        overflow: hidden;
+        border: 1px solid rgba(0, 87, 163, 0.1);
+      }
+
+      .orders-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 25px 30px;
+        background: linear-gradient(135deg, var(--light-blue) 0%, #e0f2fe 100%);
+        border-bottom: 3px solid var(--primary-blue);
+      }
+
+      .orders-header h3 {
+        color: var(--primary-blue);
+        font-size: 24px;
+        font-weight: 700;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+
+      .orders-header h3::before {
+        content: "📋";
+        font-size: 28px;
+      }
+
+      .orders-count {
+        background: var(--white);
+        padding: 8px 20px;
+        border-radius: 25px;
+        font-weight: 600;
+        box-shadow: 0 2px 10px rgba(0, 87, 163, 0.1);
+        color: var(--text-gray);
+      }
+
+      .orders-count span {
+        color: var(--primary-blue);
+        font-size: 20px;
+        font-weight: 700;
+      }
+
+      .table-responsive {
+        overflow-x: auto;
+      }
+
+      .orders-table {
+        width: 100%;
+        border-collapse: collapse;
+      }
+
+      .orders-table thead {
+        background: linear-gradient(
+          135deg,
+          var(--primary-blue) 0%,
+          #0073d1 100%
+        );
+      }
+
+      .orders-table th {
+        padding: 18px 15px;
+        text-align: left;
+        font-weight: 700;
+        color: var(--white);
+        text-transform: uppercase;
+        font-size: 13px;
+        letter-spacing: 0.5px;
+      }
+
+      .orders-table td {
+        padding: 18px 15px;
+        border-bottom: 1px solid var(--border-color);
+        font-size: 14px;
+        font-weight: 500;
+      }
+
+      .orders-table tbody tr {
+        transition: all 0.3s ease;
+      }
+
+      .orders-table tbody tr:hover {
+        background: linear-gradient(135deg, var(--light-blue) 0%, #e0f2fe 100%);
+        transform: scale(1.01);
+        box-shadow: 0 2px 8px rgba(0, 87, 163, 0.1);
+      }
+
+      .no-data {
+        text-align: center;
+        color: var(--text-gray);
+      }
+
+      .action-btns {
+        display: flex;
+        gap: 8px;
+      }
+
+      .btn-edit,
+      .btn-delete {
+        padding: 8px 16px;
+        border: none;
+        border-radius: 8px;
+        cursor: pointer;
+        font-size: 13px;
+        font-weight: 600;
+        transition: all 0.3s;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+      }
+
+      .btn-edit {
+        background: linear-gradient(
+          135deg,
+          var(--primary-blue) 0%,
+          #0073d1 100%
+        );
+        color: var(--white);
+      }
+
+      .btn-edit:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(0, 87, 163, 0.3);
+      }
+
+      .btn-delete {
+        background: linear-gradient(135deg, var(--error-red) 0%, #e74c3c 100%);
+        color: var(--white);
+      }
+
+      .btn-delete:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(220, 53, 69, 0.3);
+      }
+
+      /* Modal */
+      .modal {
+        display: none;
+        position: fixed;
+        z-index: 2000;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.6);
+        align-items: center;
+        justify-content: center;
+      }
+
+      .modal.active {
+        display: flex;
+      }
+
+      .modal-content {
+        background: var(--white);
+        border-radius: 15px;
+        width: 90%;
+        max-width: 500px;
+        max-height: 90vh;
+        overflow-y: auto;
+        animation: modalSlideIn 0.3s ease-out;
+      }
+
+      @keyframes modalSlideIn {
+        from {
+          transform: translateY(-50px);
+          opacity: 0;
+        }
+        to {
+          transform: translateY(0);
+          opacity: 1;
+        }
+      }
+
+      @keyframes fadeInUp {
+        from {
+          opacity: 0;
+          transform: translateY(20px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      @keyframes pulse {
+        0%,
+        100% {
+          opacity: 1;
+          transform: scale(1);
+        }
+        50% {
+          opacity: 0.5;
+          transform: scale(1.1);
+        }
+      }
+
+      .modal-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 25px 30px;
+        border-bottom: 2px solid var(--border-color);
+      }
+
+      .modal-header h2 {
+        color: var(--primary-blue);
+        font-size: 24px;
+      }
+
+      .close-modal {
+        font-size: 30px;
+        cursor: pointer;
+        color: var(--text-gray);
+        transition: color 0.3s;
+        background: none;
+        border: none;
+      }
+
+      .close-modal:hover {
+        color: var(--error-red);
+      }
+
+      .modal-form {
+        padding: 30px;
+      }
+
+      .modal-form .form-group {
+        margin-bottom: 20px;
+      }
+
+      .modal-form label {
+        display: block;
+        margin-bottom: 8px;
+        color: var(--text-dark);
+        font-weight: 600;
+      }
+
+      .modal-form input,
+      .modal-form select {
+        width: 100%;
+        padding: 12px;
+        border: 2px solid var(--border-color);
+        border-radius: 8px;
+        font-size: 14px;
+      }
+
+      .modal-form input[readonly] {
+        background: #f5f5f5;
+        cursor: not-allowed;
+      }
+
+      .modal-actions {
+        display: flex;
+        gap: 10px;
+        margin-top: 30px;
+      }
+
+      .modal-actions .btn {
+        flex: 1;
+      }
+
+      /* Toast */
+      .toast {
+        position: fixed;
+        bottom: 30px;
+        right: 30px;
+        padding: 18px 30px;
+        border-radius: 12px;
+        font-weight: 600;
+        font-size: 15px;
+        box-shadow: 0 8px 30px rgba(0, 0, 0, 0.3);
+        z-index: 10000;
+        opacity: 0;
+        transform: translateY(100px);
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      }
+
+      .toast.show {
+        opacity: 1;
+        transform: translateY(0);
+      }
+
+      .toast-success {
+        background: linear-gradient(
+          135deg,
+          var(--success-green) 0%,
+          #27ae60 100%
+        );
+        color: var(--white);
+      }
+
+      .toast-error {
+        background: linear-gradient(135deg, var(--error-red) 0%, #e74c3c 100%);
+        color: var(--white);
+      }
+
+      /* Footer */
+      .footer {
+        background: var(--dark-blue);
+        color: var(--white);
+        padding: 20px 0;
+        text-align: center;
+      }
+
+      .footer-bottom {
+        color: rgba(255, 255, 255, 0.7);
+      }
+
+      @media print {
+        .navbar,
+        .filters-section,
+        .footer,
+        .no-print {
+          display: none !important;
+        }
+      }
     </style>
-</head>
-<body>
+  </head>
+  <body>
     <!-- Navigation -->
     <nav class="navbar">
-        <div class="container">
-            <div class="nav-content">
-                <div class="logo">
-                    <h1>MealkyWay Admin</h1>
-                </div>
-                <div class="admin-nav">
-                    <span id="adminUsername" class="admin-username"></span>
-                    <button id="logoutBtn" class="logout-btn">Logout</button>
-                </div>
-            </div>
+      <div class="container">
+        <div class="nav-content">
+          <div class="logo">
+            <h1>MealkyWay Admin</h1>
+          </div>
+          <div class="admin-nav">
+            <span id="adminUsername" class="admin-username"></span>
+            <button id="logoutBtn" class="logout-btn">Logout</button>
+          </div>
         </div>
+      </div>
     </nav>
 
     <!-- Admin Panel Section -->
     <section class="admin-panel-section">
-        <div class="container-fluid">
-            <!-- Statistics Cards -->
-            <div class="stats-grid">
-                <div class="stat-card">
-                    <div class="stat-icon">📦</div>
-                    <div class="stat-info">
-                        <h3 id="todayOrders">0</h3>
-                        <p>Today's Orders</p>
-                    </div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-icon">🥛</div>
-                    <div class="stat-info">
-                        <h3 id="todayQuantity">0</h3>
-                        <p>Today's Bottles</p>
-                    </div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-icon">👥</div>
-                    <div class="stat-info">
-                        <h3 id="totalCustomers">0</h3>
-                        <p>Total Customers</p>
-                    </div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-icon">📊</div>
-                    <div class="stat-info">
-                        <h3 id="totalOrders">0</h3>
-                        <p>Total Orders</p>
-                    </div>
-                </div>
+      <div class="container-fluid">
+        <!-- Statistics Cards -->
+        <div class="stats-grid">
+          <div class="stat-card">
+            <div class="stat-icon">📦</div>
+            <div class="stat-info">
+              <h3 id="todayOrders">0</h3>
+              <p>Today's Orders</p>
             </div>
-
-            <!-- Notice Management Section -->
-            <div class="filters-section">
-                <div class="filters-card">
-                    <h3>📢 Manage Notice</h3>
-                    <div style="margin-top: 15px;">
-                        <textarea id="noticeContent" placeholder="Enter notice content here..." style="width: 100%; padding: 10px; border: 2px solid var(--border-color); border-radius: 8px; font-family: 'Poppins', sans-serif; min-height: 80px; resize: vertical;"></textarea>
-                        <div style="margin-top: 10px; display: flex; gap: 10px;">
-                            <button id="updateNoticeBtn" class="btn btn-primary">Update Notice</button>
-                            <button id="exportCsvBtn" class="btn btn-secondary">📥 Export Orders CSV</button>
-                        </div>
-                    </div>
-                </div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-icon">🥛</div>
+            <div class="stat-info">
+              <h3 id="todayQuantity">0</h3>
+              <p>Today's Bottles</p>
             </div>
-
-            <!-- Filters Section -->
-            <div class="filters-section">
-                <div class="filters-card">
-                    <h3>Filter Orders</h3>
-                    <div class="filters-grid">
-                        <div class="filter-group">
-                            <label for="filterInstitution">Institution</label>
-                            <select id="filterInstitution">
-                                <option value="">All Institutions</option>
-                                <option value="RU">Rajshahi University (RU)</option>
-                                <option value="RMC">Rajshahi Medical College (RMC)</option>
-                            </select>
-                        </div>
-
-                        <div class="filter-group">
-                            <label for="filterHall">Hall Name</label>
-                            <select id="filterHall">
-                                <option value="">All Halls</option>
-                            </select>
-                        </div>
-
-                        <div class="filter-group">
-                            <label for="filterContact">Contact Number</label>
-                            <input type="tel" id="filterContact" placeholder="01XXXXXXXXX">
-                        </div>
-
-                        <div class="filter-group">
-                            <label for="filterDateFrom">Date From</label>
-                            <input type="date" id="filterDateFrom">
-                        </div>
-
-                        <div class="filter-group">
-                            <label for="filterDateTo">Date To</label>
-                            <input type="date" id="filterDateTo">
-                        </div>
-
-                        <div class="filter-actions">
-                            <button id="applyFilters" class="btn btn-primary">Apply Filters</button>
-                            <button id="clearFilters" class="btn btn-secondary">Clear</button>
-                            <button id="printOrders" class="btn btn-print">🖨️ Print</button>
-                        </div>
-                    </div>
-                </div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-icon">👥</div>
+            <div class="stat-info">
+              <h3 id="totalCustomers">0</h3>
+              <p>Total Customers</p>
             </div>
-
-            <!-- Orders Table -->
-            <div class="orders-section">
-                <div class="orders-card">
-                    <div class="orders-header">
-                        <h3>Orders List</h3>
-                        <div style="display: flex; align-items: center; gap: 20px;">
-                            <div class="orders-count">
-                                <span id="ordersCount">0</span> orders found
-                            </div>
-                            <div id="lastUpdated" style="font-size: 12px; color: var(--text-gray); display: flex; align-items: center; gap: 5px;">
-                                <span>🔄</span>
-                                <span>Auto-refresh enabled</span>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="table-responsive">
-                        <table class="orders-table" id="ordersTable">
-                            <thead>
-                                <tr>
-                                    <th>Order ID</th>
-                                    <th>Date</th>
-                                    <th>Customer Name</th>
-                                    <th>Contact</th>
-                                    <th>Hall</th>
-                                    <th>Room</th>
-                                    <th>Quantity</th>
-                                    <th>Total (৳)</th>
-                                    <th class="no-print">Actions</th>
-                                </tr>
-                            </thead>
-                            <tbody id="ordersTableBody">
-                                <tr class="no-data">
-                                    <td colspan="9">Loading orders...</td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-icon">📊</div>
+            <div class="stat-info">
+              <h3 id="totalOrders">0</h3>
+              <p>Total Orders</p>
             </div>
+          </div>
         </div>
+
+        <!-- Notice Management Section -->
+        <div class="filters-section">
+          <div class="filters-card">
+            <h3>📢 Manage Notice</h3>
+            <div style="margin-top: 15px">
+              <textarea
+                id="noticeContent"
+                placeholder="Enter notice content here..."
+                style="
+                  width: 100%;
+                  padding: 10px;
+                  border: 2px solid var(--border-color);
+                  border-radius: 8px;
+                  font-family: 'Poppins', sans-serif;
+                  min-height: 80px;
+                  resize: vertical;
+                "
+              ></textarea>
+              <div style="margin-top: 10px; display: flex; gap: 10px">
+                <button id="updateNoticeBtn" class="btn btn-primary">
+                  Update Notice
+                </button>
+                <button id="exportCsvBtn" class="btn btn-secondary">
+                  📥 Export Orders CSV
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Filters Section -->
+        <div class="filters-section">
+          <div class="filters-card">
+            <h3>Filter Orders</h3>
+            <div class="filters-grid">
+              <div class="filter-group">
+                <label for="filterInstitution">Institution</label>
+                <select id="filterInstitution">
+                  <option value="">All Institutions</option>
+                  <option value="RU">Rajshahi University (RU)</option>
+                  <option value="RMC">Rajshahi Medical College (RMC)</option>
+                </select>
+              </div>
+
+              <div class="filter-group">
+                <label for="filterHall">Hall Name</label>
+                <select id="filterHall">
+                  <option value="">All Halls</option>
+                </select>
+              </div>
+
+              <div class="filter-group">
+                <label for="filterContact">Contact Number</label>
+                <input
+                  type="tel"
+                  id="filterContact"
+                  placeholder="01XXXXXXXXX"
+                />
+              </div>
+
+              <div class="filter-group">
+                <label for="filterDateFrom">Date From</label>
+                <input type="date" id="filterDateFrom" />
+              </div>
+
+              <div class="filter-group">
+                <label for="filterDateTo">Date To</label>
+                <input type="date" id="filterDateTo" />
+              </div>
+
+              <div class="filter-actions">
+                <button id="applyFilters" class="btn btn-primary">
+                  Apply Filters
+                </button>
+                <button id="clearFilters" class="btn btn-secondary">
+                  Clear
+                </button>
+                <button id="printOrders" class="btn btn-print">🖨️ Print</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Orders Table -->
+        <div class="orders-section">
+          <div class="orders-card">
+            <div class="orders-header">
+              <h3>Orders List</h3>
+              <div style="display: flex; align-items: center; gap: 20px">
+                <div class="orders-count">
+                  <span id="ordersCount">0</span> orders found
+                </div>
+                <button
+                  id="refreshBtn"
+                  class="btn btn-secondary"
+                  style="
+                    display: flex;
+                    align-items: center;
+                    gap: 8px;
+                    padding: 8px 16px;
+                    font-size: 14px;
+                  "
+                >
+                  <span>🔄</span>
+                  <span>Refresh</span>
+                </button>
+              </div>
+            </div>
+
+            <div class="table-responsive">
+              <table class="orders-table" id="ordersTable">
+                <thead>
+                  <tr>
+                    <th>Order ID</th>
+                    <th>Date</th>
+                    <th>Customer Name</th>
+                    <th>Contact</th>
+                    <th>Hall</th>
+                    <th>Room</th>
+                    <th>Quantity</th>
+                    <th>Total (৳)</th>
+                    <th>Order Time</th>
+                    <th class="no-print">Actions</th>
+                  </tr>
+                </thead>
+                <tbody id="ordersTableBody">
+                  <tr class="no-data">
+                    <td colspan="10">Loading orders...</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
     </section>
 
     <!-- Edit Order Modal -->
     <div id="editModal" class="modal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h2>Edit Order</h2>
-                <span class="close-modal">&times;</span>
-            </div>
-            <form id="editOrderForm" class="modal-form">
-                <input type="hidden" id="editOrderId">
-                
-                <div class="form-group">
-                    <label>Customer Name</label>
-                    <input type="text" id="editCustomerName" readonly>
-                </div>
-
-                <div class="form-group">
-                    <label>Contact Number</label>
-                    <input type="text" id="editContactNumber" readonly>
-                </div>
-
-                <div class="form-group">
-                    <label>Hall</label>
-                    <input type="text" id="editHall" readonly>
-                </div>
-
-                <div class="form-group">
-                    <label>Room</label>
-                    <input type="text" id="editRoom" readonly>
-                </div>
-
-                <div class="form-group">
-                    <label for="editQuantity">Quantity *</label>
-                    <input type="number" id="editQuantity" min="1" required>
-                </div>
-
-                <div class="form-group">
-                    <label for="editDate">Date *</label>
-                    <input type="date" id="editDate" required>
-                </div>
-
-                <div class="modal-actions">
-                    <button type="submit" class="btn btn-primary">Save Changes</button>
-                    <button type="button" class="btn btn-secondary close-modal">Cancel</button>
-                </div>
-            </form>
+      <div class="modal-content">
+        <div class="modal-header">
+          <h2>Edit Order</h2>
+          <span class="close-modal">&times;</span>
         </div>
+        <form id="editOrderForm" class="modal-form">
+          <input type="hidden" id="editOrderId" />
+
+          <div class="form-group">
+            <label>Customer Name</label>
+            <input type="text" id="editCustomerName" readonly />
+          </div>
+
+          <div class="form-group">
+            <label>Contact Number</label>
+            <input type="text" id="editContactNumber" readonly />
+          </div>
+
+          <div class="form-group">
+            <label>Hall</label>
+            <input type="text" id="editHall" readonly />
+          </div>
+
+          <div class="form-group">
+            <label>Room</label>
+            <input type="text" id="editRoom" readonly />
+          </div>
+
+          <div class="form-group">
+            <label for="editQuantity">Quantity *</label>
+            <input type="number" id="editQuantity" min="1" required />
+          </div>
+
+          <div class="form-group">
+            <label for="editDate">Date *</label>
+            <input type="date" id="editDate" required />
+          </div>
+
+          <div class="modal-actions">
+            <button type="submit" class="btn btn-primary">Save Changes</button>
+            <button type="button" class="btn btn-secondary close-modal">
+              Cancel
+            </button>
+          </div>
+        </form>
+      </div>
     </div>
 
     <!-- Footer -->
     <footer class="footer">
-        <div class="container">
-            <div class="footer-bottom">
-                <p>&copy; 2025 Mealky Way. All rights reserved.</p>
-            </div>
+      <div class="container">
+        <div class="footer-bottom">
+          <p>&copy; 2025 Mealky Way. All rights reserved.</p>
         </div>
+      </div>
     </footer>
 
     <script>
-        console.log('HTML loaded, about to load admin-panel.js');
+      console.log("HTML loaded, about to load admin-panel.js");
     </script>
     <script src="/admin-panel.js?v=5.0"></script>
     <script>
-        console.log('Script tag executed');
-        // Fallback error handler
-        window.addEventListener('error', function(e) {
-            console.error('Global error:', e.error);
-        });
+      console.log("Script tag executed");
+      // Fallback error handler
+      window.addEventListener("error", function (e) {
+        console.error("Global error:", e.error);
+      });
     </script>
-</body>
+  </body>
 </html>
